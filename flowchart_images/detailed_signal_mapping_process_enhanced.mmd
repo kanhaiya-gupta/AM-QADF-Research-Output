@@ -1,0 +1,71 @@
+flowchart TB
+    subgraph Sources["📊 Multi-Source Data Input"]
+        Hatching["🛤️ Hatching Paths<br/>Points: (x, y, z)<br/>Signals: power, speed, energy,<br/>hatch_spacing, overlap_percentage,<br/>layer_thickness, scan_strategy<br/>data_index for mapping"]
+        Laser["⚡ Laser Parameters<br/>Points: (x, y, z)<br/>Signals: power, speed<br/>data_index for mapping"]
+        CT["🔬 CT Scans<br/>Points: (x, y, z)<br/>Signals: density, porosity,<br/>defect_map, defect_locations"]
+        ISPM["🌡️ ISPM Monitoring<br/>Points: (x, y, z)<br/>Signals: melt_pool_temperature,<br/>melt_pool_size, peak_temperature,<br/>cooling_rate, temperature_gradient,<br/>process_events"]
+    end
+
+    subgraph Step1["Step 1: Query Raw Data"]
+        Query["Query with Filters<br/>• Spatial: bbox, layer range<br/>• Temporal: time range<br/>• Signal types"]
+    end
+
+    subgraph Step2["Step 2: Coordinate Transformation<br/>& Calibration Correction"]
+        Transform["Transform to Unified CS<br/>p_T = O_T + s_T · R_T · (R_S⁻¹ · (p_S - O_S) / s_S)<br/>+ Apply Calibration Corrections"]
+    end
+
+    subgraph Step3["Step 3: Voxel Index Calculation"]
+        VoxelIdx["Calculate Voxel Indices<br/>i = ⌊(x - x_min) / r⌋<br/>j = ⌊(y - y_min) / r⌋<br/>k = ⌊(z - z_min) / r⌋"]
+    end
+
+    subgraph Step4["Step 4: Interpolation/Aggregation"]
+        InterpMethod{Select Method}
+        Nearest["Nearest Neighbor<br/>v = s_p"]
+        Linear["Linear<br/>v = Σ w_p · s_p"]
+        IDW["IDW<br/>v = Σ(s_p/d_p^p) / Σ(1/d_p^p)"]
+        KDE["Gaussian KDE<br/>v = Σ s_p · K_h(||p-c||)"]
+        Aggregate["Aggregate Multiple Points<br/>mean, median, max, min"]
+    end
+
+    subgraph Step5["Step 5: Store Signals<br/>& Post-Mapping Correction"]
+        Store["Store in Voxel Grid<br/>V[i,j,k] = signal_value<br/>Sparse dictionary storage<br/>Optional: Apply post-mapping corrections"]
+    end
+
+    subgraph Output["📦 Unified Voxel Domain<br/>(Calibrated & Corrected)"]
+        Grid["3D Voxel Grid<br/>• Uniform/Adaptive/Multi-Res<br/>• Multiple signals per voxel<br/>• Metadata: resolution, bbox<br/>• Calibrated & corrected signals"]
+    end
+
+    Hatching --> Query
+    Laser --> Query
+    CT --> Query
+    ISPM --> Query
+
+    Query --> Transform
+    Transform --> VoxelIdx
+    VoxelIdx --> InterpMethod
+
+    InterpMethod -->|Dense data| Nearest
+    InterpMethod -->|Smooth signals| Linear
+    InterpMethod -->|Sparse data| IDW
+    InterpMethod -->|Uncertainty needed| KDE
+
+    Nearest --> Aggregate
+    Linear --> Aggregate
+    IDW --> Aggregate
+    KDE --> Aggregate
+
+    Aggregate --> Store
+    Store --> Grid
+
+    classDef source fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    classDef step fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    classDef method fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    classDef output fill:#e8f5e9,stroke:#388e3c,stroke-width:3px
+    classDef decision fill:#ffebee,stroke:#c62828,stroke-width:2px
+
+    class Hatching,Laser,CT,ISPM source
+    class Query,Transform,VoxelIdx,Aggregate,Store step
+    class Nearest,Linear,IDW,KDE method
+    class Grid output
+    class InterpMethod decision
+

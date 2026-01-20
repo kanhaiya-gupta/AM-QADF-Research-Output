@@ -1,0 +1,41 @@
+flowchart LR
+    subgraph Input["Input: Point-Based Data"]
+        P1["Point 1<br/>(x₁, y₁, z₁, value₁)"]
+        P2["Point 2<br/>(x₂, y₂, z₂, value₂)"]
+        P3["Point N<br/>(xₙ, yₙ, zₙ, valueₙ)"]
+    end
+
+    subgraph Process["Signal Mapping Process"]
+        Step1["1. Coordinate<br/>Transformation<br/>Convert to<br/>voxel space"]
+        Step2["2. Voxel Index<br/>Calculation<br/>idx = floor((p - min) / res)"]
+        Step3["3. Interpolation<br/>Method Selection<br/>Nearest/Linear/IDW"]
+        Step4["4. Value Assignment<br/>Assign signal value<br/>to voxel"]
+        Step5["5. Aggregation<br/>Multiple points →<br/>Single voxel"]
+    end
+
+    subgraph Output["Output: Voxel Grid"]
+        V1["Voxel [i,j,k]<br/>Signal Value"]
+        V2["Voxel [i+1,j,k]<br/>Signal Value"]
+        V3["Voxel Grid<br/>Complete 3D Array"]
+    end
+
+    P1 --> Step1
+    P2 --> Step1
+    P3 --> Step1
+
+    Step1 --> Step2
+    Step2 --> Step3
+    Step3 --> Step4
+    Step4 --> Step5
+
+    Step5 --> V1
+    Step5 --> V2
+    Step5 --> V3
+
+    classDef input fill:#e3f2fd,stroke:#1976d2
+    classDef process fill:#fff3e0,stroke:#f57c00
+    classDef output fill:#e8f5e9,stroke:#388e3c
+
+    class P1,P2,P3 input
+    class Step1,Step2,Step3,Step4,Step5 process
+    class V1,V2,V3 output

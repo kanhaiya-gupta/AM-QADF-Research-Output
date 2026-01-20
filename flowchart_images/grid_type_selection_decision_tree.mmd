@@ -1,0 +1,28 @@
+flowchart TD
+    Start([Grid Type Selection]) --> Memory{Is memory<br/>constrained?}
+    
+    Memory -->|Yes| AdaptiveDensity[Adaptive Grid<br/>density-based]
+    Memory -->|No| MultiScale{Is multi-scale<br/>analysis needed?}
+    
+    MultiScale -->|Yes| MultiRes[Multi-Resolution Grid<br/>Multiple LOD levels]
+    MultiScale -->|No| Density{Is data density<br/>uniform?}
+    
+    Density -->|Yes| Uniform[Uniform Grid<br/>Fixed resolution]
+    Density -->|No| Critical{Are there critical regions<br/>needing fine resolution?}
+    
+    Critical -->|Yes| AdaptiveSpatial[Adaptive Grid<br/>spatial resolution map]
+    Critical -->|No| Uniform
+    
+    AdaptiveDensity --> End([Selected Grid Type])
+    MultiRes --> End
+    Uniform --> End
+    AdaptiveSpatial --> End
+    
+    classDef startEnd fill:#c8e6c9,stroke:#2e7d32,stroke-width:3px
+    classDef decision fill:#e3f2fd,stroke:#1565c0,stroke-width:2px
+    classDef result fill:#fff3e0,stroke:#ef6c00,stroke-width:2px
+    
+    class Start,End startEnd
+    class Memory,MultiScale,Density,Critical decision
+    class AdaptiveDensity,MultiRes,Uniform,AdaptiveSpatial result
+

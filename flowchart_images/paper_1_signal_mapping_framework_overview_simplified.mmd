@@ -1,0 +1,74 @@
+flowchart TB
+    %% Data Sources
+    subgraph Sources["📊 Multi-Source Data"]
+        Hatching["🛤️ Hatching Paths<br/>Point coordinates + path data"]
+        Laser["⚡ Laser Parameters<br/>Power, speed, energy density"]
+        CT["🔬 CT Scans<br/>Defect locations + density"]
+        ISPM["🌡️ ISPM Monitoring<br/>Temperature measurements"]
+    end
+
+    %% Signal Mapping Core
+    subgraph Mapping["🎯 SIGNAL MAPPING FRAMEWORK"]
+        direction TB
+        Query["1️⃣ Query Raw Data<br/>Spatial + Temporal Filters"]
+        Transform["2️⃣ Coordinate Transformation<br/>Unify coordinate systems"]
+        Voxelize["3️⃣ Voxel Index Calculation<br/>Point → Voxel mapping"]
+        Interpolate["4️⃣ Signal Interpolation<br/>Nearest/Linear/IDW"]
+        Store["5️⃣ Store Signals<br/>Voxel grid with signals"]
+    end
+
+    %% Voxel Domain
+    subgraph VoxelDomain["📦 Unified Voxel Domain"]
+        Grid["Voxel Grid<br/>3D Spatial Structure<br/>Uniform/Adaptive/Multi-Resolution"]
+        Signals["Mapped Signals<br/>Hatching, Laser, CT, ISPM"]
+        Metadata["Metadata<br/>Resolution, BBox, Quality Metrics"]
+    end
+
+    %% Downstream Applications (Simplified - No Methods/Metrics)
+    subgraph Applications["🚀 Downstream Applications"]
+        Fusion["🔀 Data Fusion"]
+        Quality["✅ Quality Assessment"]
+        Analytics["📊 Statistical Analysis"]
+        Anomaly["⚠️ Anomaly Detection"]
+        Sensitivity["🔬 Sensitivity Analysis"]
+        Experiments["🧪 Virtual Experiments"]
+    end
+
+    %% Flow connections
+    Hatching --> Query
+    Laser --> Query
+    CT --> Query
+    ISPM --> Query
+
+    Query --> Transform
+    Transform --> Voxelize
+    Voxelize --> Interpolate
+    Interpolate --> Store
+
+    Store --> Grid
+    Store --> Signals
+    Store --> Metadata
+
+    Grid --> Fusion
+    Signals --> Fusion
+    Grid --> Quality
+    Signals --> Quality
+    Grid --> Analytics
+    Signals --> Analytics
+    Grid --> Anomaly
+    Signals --> Anomaly
+    Grid --> Sensitivity
+    Signals --> Sensitivity
+    Grid --> Experiments
+    Signals --> Experiments
+
+    %% Styling
+    classDef mappingCore fill:#1976d2,stroke:#0d47a1,stroke-width:3px,color:#fff
+    classDef sources fill:#4ecdc4,stroke:#00897b,stroke-width:2px,color:#000
+    classDef voxel fill:#81c784,stroke:#388e3c,stroke-width:2px,color:#000
+    classDef apps fill:#ffb74d,stroke:#f57c00,stroke-width:2px,color:#000
+
+    class Query,Transform,Voxelize,Interpolate,Store mappingCore
+    class Hatching,Laser,CT,ISPM sources
+    class Grid,Signals,Metadata voxel
+    class Fusion,Quality,Analytics,Anomaly,Sensitivity,Experiments apps

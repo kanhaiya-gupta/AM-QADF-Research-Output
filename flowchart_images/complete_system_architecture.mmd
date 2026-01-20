@@ -1,0 +1,131 @@
+flowchart TB
+    subgraph Phase1["Phase 1: Data Collection"]
+        S1[STL Models]
+        S2[Hatching Data]
+        S3[Laser Parameters]
+        S4[CT Scans]
+        S5[ISPM Monitoring]
+    end
+
+    subgraph Phase2["Phase 2: Signal Mapping ⭐ CORE"]
+        direction LR
+        SM[Signal Mapping<br/>Engine]
+        CS[Coordinate<br/>System<br/>Transformer]
+        IP[Interpolation<br/>Module]
+        VG[Voxel Grid<br/>Generator]
+    end
+
+    subgraph Phase3["Phase 3: Voxel Domain"]
+        VD[Unified Voxel<br/>Domain]
+        VS[Voxel<br/>Storage]
+    end
+
+    subgraph Phase4["Phase 4: Analysis & Applications"]
+        direction TB
+        F[Data Fusion]
+        Q[Quality<br/>Assessment]
+        A[Statistical<br/>Analysis]
+        AD[Anomaly<br/>Detection]
+        SA[Sensitivity<br/>Analysis]
+        VE[Virtual<br/>Experiments]
+    end
+
+    subgraph FusionMethods["Fusion Methods"]
+        F1[Weighted Average]
+        F2[Median]
+        F3[Maximum]
+        F4[Minimum]
+        F5[Quality-Based]
+    end
+
+    subgraph QualityMethods["Quality Metrics"]
+        Q1[Completeness]
+        Q2[Coverage]
+        Q3[SNR]
+        Q4[Uncertainty]
+        Q5[Alignment]
+    end
+
+    subgraph AnalyticsMethods["Analytics Methods"]
+        A1[Descriptive Stats]
+        A2[Correlation]
+        A3[Trends]
+        A4[Patterns]
+    end
+
+    subgraph AnomalyMethods["Anomaly Detection Methods"]
+        AD1[Z-Score]
+        AD2[IQR]
+        AD3[Isolation Forest]
+        AD4[DBSCAN]
+        AD5[LOF]
+        AD6[Mahalanobis]
+        AD7[One-Class SVM]
+        AD8[LSTM Autoencoder]
+    end
+
+    subgraph SensitivityMethods["Sensitivity Analysis Methods"]
+        SA1[Sobol]
+        SA2[Morris]
+        SA3[FAST]
+        SA4[RBD]
+        SA5[Delta]
+        SA6[PAWN]
+        SA7[DGSM]
+        SA8[Local Derivatives]
+        SA9[Local Perturbation]
+        SA10[Local Central Diff]
+        SA11[Monte Carlo]
+        SA12[Bayesian]
+    end
+
+    subgraph ExperimentMethods["Virtual Experiment Designs"]
+        VE1[LHS]
+        VE2[Full Factorial 2^k]
+        VE3[Full Factorial 3^k]
+        VE4[Random Sampling]
+        VE5[Parameter Sweep]
+        VE6[Central Composite CCD]
+        VE7[Box-Behnken BBD]
+        VE8[D-Optimal]
+        VE9[A-Optimal]
+        VE10[G-Optimal]
+    end
+
+    S1 --> SM
+    S2 --> SM
+    S3 --> SM
+    S4 --> SM
+    S5 --> SM
+
+    SM --> CS
+    CS --> IP
+    IP --> VG
+    VG --> VD
+
+    VD --> VS
+    VD --> F
+    VD --> Q
+    VD --> A
+    VD --> AD
+    VD --> SA
+    VD --> VE
+
+    F -->|Methods| FusionMethods
+    Q -->|Metrics| QualityMethods
+    A -->|Methods| AnalyticsMethods
+    AD -->|Methods| AnomalyMethods
+    SA -->|Methods| SensitivityMethods
+    VE -->|Designs| ExperimentMethods
+
+    classDef phase1 fill:#e1f5fe,stroke:#0277bd
+    classDef phase2 fill:#ffebee,stroke:#c62828,stroke-width:4px
+    classDef phase3 fill:#f3e5f5,stroke:#7b1fa2
+    classDef phase4 fill:#e8f5e9,stroke:#388e3c
+    classDef methods fill:#fff9c4,stroke:#f57f17
+
+    class S1,S2,S3,S4,S5 phase1
+    class SM,CS,IP,VG phase2
+    class VD,VS phase3
+    class F,Q,A,AD,SA,VE phase4
+    class F1,F2,F3,F4,F5,Q1,Q2,Q3,Q4,Q5,A1,A2,A3,A4,AD1,AD2,AD3,AD4,AD5,AD6,AD7,AD8,SA1,SA2,SA3,SA4,SA5,SA6,SA7,SA8,SA9,SA10,SA11,SA12,VE1,VE2,VE3,VE4,VE5,VE6,VE7,VE8,VE9,VE10 methods

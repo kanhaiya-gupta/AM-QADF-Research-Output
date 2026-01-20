@@ -1,0 +1,49 @@
+flowchart TD
+    Start([Start Signal Mapping]) --> Load[Load Voxel Grid<br/>Structure]
+    Load --> ForEach{For Each<br/>Data Source}
+    
+    ForEach --> Query[Query Data Points<br/>from Warehouse]
+    Query --> Filter{Spatial/Temporal<br/>Filter?}
+    Filter -->|Yes| ApplyFilter[Apply Filters]
+    Filter -->|No| Transform
+    ApplyFilter --> Transform
+    
+    Transform[Transform Coordinates<br/>to Voxel Space] --> Calc[Calculate Voxel Indices<br/>for Each Point]
+    Calc --> SelectMethod{Select<br/>Interpolation<br/>Method}
+    
+    SelectMethod -->|Nearest| Nearest[Nearest Neighbor<br/>Find closest point]
+    SelectMethod -->|Linear| Linear[Linear Interpolation<br/>Weighted average]
+    SelectMethod -->|IDW| IDW[Inverse Distance<br/>Weighted]
+    
+    Nearest --> Aggregate{Aggregate<br/>Multiple Points<br/>per Voxel?}
+    Linear --> Aggregate
+    IDW --> Aggregate
+    
+    Aggregate -->|Yes| AggMethod{Select<br/>Aggregation<br/>Method}
+    Aggregate -->|No| Assign
+    
+    AggMethod -->|Mean| Mean[Calculate Mean]
+    AggMethod -->|Median| Median[Calculate Median]
+    AggMethod -->|Max| Max[Take Maximum]
+    AggMethod -->|Min| Min[Take Minimum]
+    
+    Mean --> Assign
+    Median --> Assign
+    Max --> Assign
+    Min --> Assign
+    
+    Assign[Assign Value to Voxel] --> CheckMore{More<br/>Sources?}
+    CheckMore -->|Yes| ForEach
+    CheckMore -->|No| Store[Store Signal<br/>in Voxel Grid]
+    
+    Store --> Quality[Calculate Quality<br/>Metrics]
+    Quality --> End([End: Voxel Grid<br/>with Mapped Signals])
+    
+    classDef startEnd fill:#c8e6c9,stroke:#2e7d32
+    classDef process fill:#fff3e0,stroke:#ef6c00
+    classDef decision fill:#e3f2fd,stroke:#1565c0
+    classDef mapping fill:#ffebee,stroke:#c62828,stroke-width:3px
+    
+    class Start,End startEnd
+    class Load,Query,Transform,Calc,Nearest,Linear,IDW,Mean,Median,Max,Min,Assign,Store,Quality process
+    class ForEach,Filter,SelectMethod,Aggregate,AggMethod,CheckMore decision

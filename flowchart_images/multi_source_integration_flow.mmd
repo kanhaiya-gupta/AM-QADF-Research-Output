@@ -1,0 +1,63 @@
+flowchart TD
+    subgraph Warehouse["🗄️ Data Warehouse"]
+        DB[(MongoDB<br/>Collections)]
+    end
+
+    subgraph Mapping["🎯 Signal Mapping Engine"]
+        direction TB
+        Q1["Query Hatching<br/>Paths"]
+        Q2["Query Laser<br/>Parameters"]
+        Q3["Query CT<br/>Scans"]
+        Q4["Query ISPM<br/>Monitoring"]
+        
+        T1["Transform<br/>Coordinates"]
+        T2["Transform<br/>Coordinates"]
+        T3["Transform<br/>Coordinates"]
+        T4["Transform<br/>Coordinates"]
+        
+        M1["Map to<br/>Voxels"]
+        M2["Map to<br/>Voxels"]
+        M3["Map to<br/>Voxels"]
+        M4["Map to<br/>Voxels"]
+    end
+
+    subgraph Unified["📦 Unified Voxel Grid"]
+        VG["Voxel Grid<br/>Structure"]
+        S1["Hatching<br/>Signal"]
+        S2["Laser<br/>Signal"]
+        S3["CT<br/>Signal"]
+        S4["ISPM<br/>Signal"]
+    end
+
+    DB --> Q1
+    DB --> Q2
+    DB --> Q3
+    DB --> Q4
+
+    Q1 --> T1
+    Q2 --> T2
+    Q3 --> T3
+    Q4 --> T4
+
+    T1 --> M1
+    T2 --> M2
+    T3 --> M3
+    T4 --> M4
+
+    M1 --> VG
+    M2 --> VG
+    M3 --> VG
+    M4 --> VG
+
+    M1 --> S1
+    M2 --> S2
+    M3 --> S3
+    M4 --> S4
+
+    classDef warehouse fill:#bbdefb,stroke:#1976d2
+    classDef mapping fill:#ffccbc,stroke:#e64a19,stroke-width:3px
+    classDef unified fill:#c8e6c9,stroke:#388e3c
+
+    class DB warehouse
+    class Q1,Q2,Q3,Q4,T1,T2,T3,T4,M1,M2,M3,M4 mapping
+    class VG,S1,S2,S3,S4 unified

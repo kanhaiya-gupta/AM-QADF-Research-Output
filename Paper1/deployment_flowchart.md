@@ -1,0 +1,181 @@
+# AM-QADF Deployment Architecture Flowchart
+
+```mermaid
+flowchart TB
+    %% ============================================
+    %% START: Developer & Source Control
+    %% ============================================
+    Dev[👨‍💻 Developer<br/>Local Development] --> Git[📦 Git Repository<br/>GitHub]
+    
+    %% ============================================
+    %% BRANCH 1: CI/CD PIPELINE
+    %% ============================================
+    Git -->|Push/PR| CICD[🔄 CI/CD Pipeline<br/>GitHub Actions]
+    
+    CICD --> CI_Workflow[CI Workflow<br/>Manual Trigger]
+    CICD --> PR_Workflow[PR Workflow<br/>Pull Request Validation]
+    CICD --> Nightly_Workflow[Nightly Workflow<br/>Weekly Schedule]
+    CICD --> Release_Workflow[Release Workflow<br/>Version Release]
+    
+    CI_Workflow --> CI_Tasks[CI Tasks]
+    CI_Tasks -->|Unit Tests| UnitTests[Unit Tests<br/>3080 tests]
+    CI_Tasks -->|Integration Tests| IntTests[Integration Tests<br/>Spark, MongoDB]
+    CI_Tasks -->|Linting| Linting[Code Quality<br/>Black, Flake8, MyPy]
+    CI_Tasks -->|Notebooks| NotebookVal[Notebook Validation<br/>29 notebooks]
+    CI_Tasks -->|Coverage| Coverage[Coverage Report<br/>19.17% coverage]
+    
+    PR_Workflow --> PR_Tasks[PR Tasks]
+    PR_Tasks -->|Quick Tests| QuickTests[Quick Validation<br/>Format Check]
+    PR_Tasks -->|Import Check| ImportCheck[Import Structure Check]
+    
+    Nightly_Workflow --> Nightly_Tasks[Nightly Tasks]
+    Nightly_Tasks -->|Security| Security[Security Scans<br/>Bandit, Safety]
+    Nightly_Tasks -->|Full Tests| FullTests[Full Test Suite]
+    Nightly_Tasks -->|Performance| PerfTests[Performance Tests]
+    
+    Release_Workflow --> Release_Tasks[Release Tasks]
+    Release_Tasks -->|Documentation| Docs[Build Documentation<br/>Sphinx]
+    Release_Tasks -->|Version Tag| VersionTag[Version Tagging]
+    
+    %% ============================================
+    %% BRANCH 2: DOCKER/CONTAINERIZATION
+    %% ============================================
+    Git -->|Source Code| Docker[🐳 Docker/Containerization<br/>Build & Package]
+    
+    Docker --> DockerBuild[Docker Build Process]
+    DockerBuild -->|Build Image| DockerImage[Docker Image<br/>AM-QADF Application]
+    DockerBuild -->|Dockerfile| Dockerfile[Dockerfile.spark<br/>Spark Container]
+    
+    Docker --> DevDocker[Development Environment<br/>docker-compose.dev.yml]
+    Docker --> ProdDocker[Production Environment<br/>docker-compose.prod.yml]
+    
+    DevDocker --> DevServices[Development Services]
+    DevServices --> DevMongo[(MongoDB 7.0<br/>Development Container)]
+    DevServices --> DevSpark[Apache Spark 3.5.0<br/>Local Mode Container]
+    DevServices --> DevNetwork[Development Network<br/>am-qadf-network]
+    DevServices --> DevVolumes[Development Volumes<br/>mongodb_data, spark_data]
+    
+    ProdDocker --> ProdServices[Production Services]
+    ProdServices --> ProdMongo[(MongoDB 7.0<br/>Production Container)]
+    ProdServices --> ProdSpark[Apache Spark 3.5.0<br/>Cluster Mode Container]
+    ProdServices --> ProdNetwork[Production Network<br/>am-qadf-network]
+    ProdServices --> ProdVolumes[Production Volumes<br/>mongodb_data, spark_data]
+    ProdServices --> ProdHealth[Health Checks<br/>MongoDB, Spark]
+    ProdServices --> ProdResources[Resource Limits<br/>CPU, Memory]
+    
+    %% ============================================
+    %% BRANCH 3: PRODUCTION INFRASTRUCTURE
+    %% ============================================
+    DockerImage -->|Deploy| Production[🏭 Production Infrastructure<br/>AM-QADF Framework Runtime]
+    
+    Production --> ConfigLayer[Configuration Layer<br/>AM-QADF Module]
+    ConfigLayer --> ProdConfig[Production Config<br/>Environment Settings]
+    ConfigLayer --> Secrets[Secrets Management<br/>Env, Vault, AWS]
+    ConfigLayer --> FeatureFlags[Feature Flags<br/>Experimental Features]
+    
+    Production --> ScalabilityLayer[Scalability Layer<br/>AM-QADF Module]
+    ScalabilityLayer --> LoadBalancer[Load Balancer<br/>Round Robin, Least Connections]
+    ScalabilityLayer --> AutoScaler[Auto Scaler<br/>CPU, Memory, Request Rate]
+    AutoScaler --> Workers[Worker Instances<br/>Horizontal Scaling]
+    
+    Production --> FaultToleranceLayer[Fault Tolerance Layer<br/>AM-QADF Module]
+    FaultToleranceLayer --> CircuitBreaker[Circuit Breaker<br/>Failure Threshold]
+    FaultToleranceLayer --> RetryPolicy[Retry Policy<br/>Exponential Backoff]
+    FaultToleranceLayer --> GracefulDeg[Graceful Degradation<br/>Fallback Mechanisms]
+    
+    Production --> MonitoringLayer[Monitoring Layer<br/>AM-QADF Module]
+    MonitoringLayer --> ResourceMonitor[Resource Monitor<br/>CPU, Memory, Disk, Network]
+    MonitoringLayer --> HealthCheck[Health Checks<br/>System & Process]
+    MonitoringLayer --> Metrics[Metrics Collection<br/>Prometheus Integration]
+    
+    Production --> PerformanceLayer[Performance Layer<br/>AM-QADF Module]
+    PerformanceLayer --> Profiler[Profiler<br/>CPU, Memory Profiling]
+    PerformanceLayer --> Tuner[Tuner<br/>Optimization Recommendations]
+    
+    Production --> APILayer[API Layer<br/>AM-QADF Module]
+    APILayer --> APIGateway[API Gateway<br/>REST API Endpoints]
+    APIGateway --> Auth[Authentication<br/>JWT, OAuth2, API Keys]
+    Auth --> RBAC[RBAC<br/>Role-Based Access Control]
+    RBAC --> Permissions[Permissions<br/>Quality, Optimization, Admin]
+    
+    Production --> IntegrationLayer[Integration Layer<br/>AM-QADF Module]
+    IntegrationLayer --> MPM_Integration[MPM Integration<br/>Manufacturing Process Management]
+    IntegrationLayer --> Equipment_Integration[Equipment Integration<br/>3D Printers, Sensors, PLCs]
+    
+    Production --> StreamingLayer[Streaming Layer<br/>AM-QADF Module]
+    StreamingLayer --> StreamingClient[Streaming Client<br/>Real-time Data Processing]
+    StreamingClient --> BufferManager[Buffer Manager<br/>Temporal Windows]
+    StreamingClient --> IncrementalProcessor[Incremental Processor<br/>Stream Processing]
+    
+    Production --> AlertLayer[Alert Layer<br/>AM-QADF Module]
+    AlertLayer --> AlertSystem[Alert System<br/>Threshold Violations]
+    AlertSystem --> NotificationChannels[Notification Channels]
+    NotificationChannels --> Email[Email<br/>SMTP]
+    NotificationChannels --> SMS[SMS<br/>Twilio, AWS SNS]
+    NotificationChannels --> Dashboard[Dashboard<br/>WebSocket]
+    
+    %% ============================================
+    %% EXTERNAL SERVICES (Not AM-QADF)
+    %% ============================================
+    StreamingClient --> Kafka[📡 Kafka<br/>External Service<br/>Message Broker]
+    Workers --> MongoDB[(MongoDB<br/>External Service<br/>Data Storage)]
+    IncrementalProcessor --> MongoDB
+    MonitoringLayer --> MongoDB
+    Workers --> Redis[(Redis<br/>External Service<br/>Caching & Queues)]
+    Workers --> ExternalSpark[⚡ External Spark Cluster<br/>External Service<br/>Distributed Processing]
+    
+    %% ============================================
+    %% STYLING
+    %% ============================================
+    classDef dev fill:#e3f2fd,stroke:#0277bd,stroke-width:2px
+    classDef cicd fill:#fff3e0,stroke:#e65100,stroke-width:3px
+    classDef docker fill:#e8f5e9,stroke:#2e7d32,stroke-width:3px
+    classDef production fill:#f3e5f5,stroke:#7b1fa2,stroke-width:3px
+    classDef amqadf fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    classDef external fill:#f5f5f5,stroke:#424242,stroke-width:2px
+    
+    class Dev,Git dev
+    class CICD,CI_Workflow,PR_Workflow,Nightly_Workflow,Release_Workflow,CI_Tasks,UnitTests,IntTests,Linting,NotebookVal,Coverage,PR_Tasks,QuickTests,ImportCheck,Nightly_Tasks,Security,FullTests,PerfTests,Release_Tasks,Docs,VersionTag cicd
+    class Docker,DockerBuild,DockerImage,Dockerfile,DevDocker,ProdDocker,DevServices,DevMongo,DevSpark,DevNetwork,DevVolumes,ProdServices,ProdMongo,ProdSpark,ProdNetwork,ProdVolumes,ProdHealth,ProdResources docker
+    class Production,ConfigLayer,ProdConfig,Secrets,FeatureFlags,ScalabilityLayer,LoadBalancer,AutoScaler,Workers,FaultToleranceLayer,CircuitBreaker,RetryPolicy,GracefulDeg,MonitoringLayer,ResourceMonitor,HealthCheck,Metrics,PerformanceLayer,Profiler,Tuner,APILayer,APIGateway,Auth,RBAC,Permissions,IntegrationLayer,MPM_Integration,Equipment_Integration,StreamingLayer,StreamingClient,BufferManager,IncrementalProcessor,AlertLayer,AlertSystem,NotificationChannels,Email,SMS,Dashboard production
+    class Kafka,MongoDB,Redis,ExternalSpark external
+```
+
+## Architecture Overview
+
+### 1. CI/CD Pipeline (Testing & Validation)
+**Purpose**: Automated testing and validation before deployment
+
+- **CI Workflow**: Unit tests (3080), integration tests, linting, notebook validation, coverage
+- **PR Workflow**: Quick validation, format checks, import structure
+- **Nightly Workflow**: Security scans, full test suite, performance tests
+- **Release Workflow**: Documentation build, version tagging
+
+### 2. Docker/Containerization (Build & Package)
+**Purpose**: Package application into containers for consistent deployment
+
+- **Docker Build**: Create Docker images from source code
+- **Development Environment**: Local development with MongoDB and Spark containers
+- **Production Environment**: Production-ready containers with health checks and resource limits
+- **Services**: MongoDB 7.0, Apache Spark 3.5.0, networking, volumes
+
+### 3. Production Infrastructure (AM-QADF Framework Runtime)
+**Purpose**: Core AM-QADF framework running in production
+
+**AM-QADF Modules** (all in `src/am_qadf/`):
+- **Configuration Layer**: Production config, secrets management, feature flags
+- **Scalability Layer**: Load balancer, auto-scaler, worker instances
+- **Fault Tolerance Layer**: Circuit breaker, retry policy, graceful degradation
+- **Monitoring Layer**: Resource monitor, health checks, metrics collection
+- **Performance Layer**: Profiler, tuner
+- **API Layer**: API Gateway, authentication (JWT/OAuth2/API keys), RBAC
+- **Integration Layer**: MPM integration, equipment integration
+- **Streaming Layer**: Streaming client, buffer manager, incremental processor
+- **Alert Layer**: Alert system, notification channels (Email/SMS/Dashboard)
+
+### External Services
+Services AM-QADF integrates with but doesn't provide:
+- **Kafka**: Message broker for streaming
+- **MongoDB**: Primary data storage
+- **Redis**: Caching and queues
+- **External Spark Cluster**: Distributed processing

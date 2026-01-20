@@ -1,0 +1,45 @@
+flowchart LR
+    Start([Method Selection]) --> RealTime{Real-time<br/>required?}
+    
+    RealTime -->|Yes| Nearest[Nearest Neighbor]
+    RealTime -->|No| Uncertainty{Uncertainty<br/>needed?}
+    
+    Uncertainty -->|Yes| SignalType1{Signal<br/>smooth?}
+    SignalType1 -->|Yes| GaussianKDE[Gaussian KDE]
+    SignalType1 -->|No| RBF[RBF]
+    
+    Uncertainty -->|No| Sparse{Data sparse?}
+    
+    Sparse -->|Yes| SparseMethod{Method}
+    SparseMethod -->|IDW| IDW[IDW]
+    SparseMethod -->|KDE| GaussianKDE
+    
+    Sparse -->|No| Smooth{Signal smooth?}
+    
+    Smooth -->|Yes| SmoothMethod{Method}
+    SmoothMethod -->|Gaussian| GaussianKDE
+    SmoothMethod -->|Linear| Linear[Linear]
+    
+    Smooth -->|No| Sharp{Sharp features<br/>important?}
+    
+    Sharp -->|Yes| SharpMethod{Method}
+    SharpMethod -->|Nearest| Nearest
+    SharpMethod -->|IDW| IDW
+    
+    Sharp -->|No| DefaultMethod{Method}
+    DefaultMethod -->|Linear| Linear
+    DefaultMethod -->|Gaussian| GaussianKDE
+    
+    Nearest --> End([Selected Method])
+    IDW --> End
+    Linear --> End
+    GaussianKDE --> End
+    RBF --> End
+    
+    classDef startEnd fill:#c8e6c9,stroke:#2e7d32,stroke-width:3px
+    classDef decision fill:#e3f2fd,stroke:#1565c0,stroke-width:2px
+    classDef result fill:#fff3e0,stroke:#ef6c00,stroke-width:2px
+    
+    class Start,End startEnd
+    class RealTime,Uncertainty,SignalType1,Sparse,Smooth,Sharp,SparseMethod,SmoothMethod,SharpMethod,DefaultMethod decision
+    class Nearest,IDW,Linear,GaussianKDE,RBF result

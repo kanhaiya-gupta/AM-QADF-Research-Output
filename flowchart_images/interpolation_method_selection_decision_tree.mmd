@@ -1,0 +1,46 @@
+flowchart TD
+    Start([Interpolation Method Selection]) --> RealTime{Is real-time<br/>processing required?}
+    
+    RealTime -->|Yes| Nearest[Nearest Neighbor<br/>Fast O-N complexity]
+    RealTime -->|No| Uncertainty{Is uncertainty<br/>quantification needed?}
+    
+    Uncertainty -->|Yes| SignalType1{Is signal<br/>smooth?}
+    SignalType1 -->|Yes| GaussianKDE[Gaussian KDE<br/>Natural uncertainty]
+    SignalType1 -->|No| RBF[RBF<br/>Exact interpolation]
+    
+    Uncertainty -->|No| Sparse{Is data sparse<br/>&lt;1 point per voxel?}
+    
+    Sparse -->|Yes| SparseMethod{Choose method}
+    SparseMethod -->|IDW| IDW[IDW Interpolation<br/>Distance-weighted]
+    SparseMethod -->|KDE| GaussianKDE
+    
+    Sparse -->|No| Smooth{Is signal smooth<br/>temperature, density?}
+    
+    Smooth -->|Yes| SmoothMethod{Choose method}
+    SmoothMethod -->|Gaussian| GaussianKDE
+    SmoothMethod -->|Linear| Linear[Linear Interpolation<br/>k-nearest neighbors]
+    
+    Smooth -->|No| Sharp{Are sharp features<br/>important?}
+    
+    Sharp -->|Yes| SharpMethod{Choose method}
+    SharpMethod -->|Nearest| Nearest
+    SharpMethod -->|IDW| IDW
+    
+    Sharp -->|No| DefaultMethod{Choose method}
+    DefaultMethod -->|Linear| Linear
+    DefaultMethod -->|Gaussian| GaussianKDE
+    
+    Nearest --> End([Selected Method])
+    IDW --> End
+    Linear --> End
+    GaussianKDE --> End
+    RBF --> End
+    
+    classDef startEnd fill:#c8e6c9,stroke:#2e7d32,stroke-width:3px
+    classDef decision fill:#e3f2fd,stroke:#1565c0,stroke-width:2px
+    classDef result fill:#fff3e0,stroke:#ef6c00,stroke-width:2px
+    
+    class Start,End startEnd
+    class RealTime,Uncertainty,SignalType1,Sparse,Smooth,Sharp,SparseMethod,SmoothMethod,SharpMethod,DefaultMethod decision
+    class Nearest,IDW,Linear,GaussianKDE,RBF result
+

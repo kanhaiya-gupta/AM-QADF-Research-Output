@@ -1,0 +1,126 @@
+flowchart TB
+    %% Data Sources
+    subgraph Sources["📊 Multi-Source Data"]
+        Hatching["🛤️ Hatching Paths<br/>Point coordinates + path data"]
+        Laser["⚡ Laser Parameters<br/>Power, speed, energy density"]
+        CT["🔬 CT Scans<br/>Defect locations + density"]
+        ISPM["🌡️ ISPM Monitoring<br/>Temperature measurements"]
+    end
+
+    %% Signal Mapping Core
+    subgraph Mapping["🎯 SIGNAL MAPPING - THE HEART"]
+        Query["1️⃣ Query Raw Data<br/>Spatial + Temporal Filters"]
+        Transform["2️⃣ Coordinate Transform<br/>Unify coordinate systems"]
+        Voxelize["3️⃣ Voxel Index Calculation<br/>Point → Voxel mapping"]
+        Interpolate["4️⃣ Interpolation/Aggregation<br/>Nearest/Linear/IDW"]
+        Store["5️⃣ Store Signals<br/>Voxel grid with signals"]
+    end
+
+    %% Voxel Domain
+    subgraph VoxelDomain["📦 Unified Voxel Domain"]
+        Grid["Voxel Grid<br/>3D Spatial Structure"]
+        Signals["Mapped Signals<br/>Hatching, Laser, CT, ISPM"]
+        Metadata["Metadata<br/>Resolution, BBox, Quality"]
+    end
+
+    %% Downstream Applications
+    subgraph Applications["🚀 Downstream Applications"]
+        Fusion["🔀 Data Fusion"]
+        Quality["✅ Quality Assessment"]
+        Analytics["📊 Statistical Analysis"]
+        Anomaly["⚠️ Anomaly Detection"]
+        Sensitivity["🔬 Sensitivity Analysis"]
+        Experiments["🧪 Virtual Experiments"]
+    end
+
+    %% Methods for each application
+    subgraph FM["Fusion Methods"]
+        F1[Weighted Avg]
+        F2[Median]
+        F3[Max/Min]
+        F4[Quality-Based]
+    end
+
+    subgraph QM["Quality Metrics"]
+        Q1[Completeness]
+        Q2[SNR]
+        Q3[Alignment]
+        Q4[Coverage]
+    end
+
+    subgraph AM["Analytics Methods"]
+        A1[Descriptive]
+        A2[Correlation]
+        A3[Trends]
+        A4[Patterns]
+    end
+
+    subgraph ADM["Anomaly Methods"]
+        AD1[Z-Score/IQR]
+        AD2[Isolation Forest]
+        AD3[DBSCAN/LOF]
+        AD4[ML Methods]
+    end
+
+    subgraph SAM["Sensitivity Methods<br/>12 Total"]
+        SA1[Sobol/Morris]
+        SA2[FAST/RBD]
+        SA3[Delta/PAWN/DGSM]
+        SA4[Local/MC/Bayesian]
+    end
+
+    subgraph VEM["Experiment Designs<br/>10 Total"]
+        VE1[LHS/Random]
+        VE2[Factorial 2^k/3^k]
+        VE3[CCD/BBD]
+        VE4[D/A/G-Optimal]
+    end
+
+    %% Flow connections
+    Hatching --> Query
+    Laser --> Query
+    CT --> Query
+    ISPM --> Query
+
+    Query --> Transform
+    Transform --> Voxelize
+    Voxelize --> Interpolate
+    Interpolate --> Store
+
+    Store --> Grid
+    Store --> Signals
+    Store --> Metadata
+
+    Grid --> Fusion
+    Signals --> Fusion
+    Grid --> Quality
+    Signals --> Quality
+    Grid --> Analytics
+    Signals --> Analytics
+    Grid --> Anomaly
+    Signals --> Anomaly
+    Grid --> Sensitivity
+    Signals --> Sensitivity
+    Grid --> Experiments
+    Signals --> Experiments
+
+    %% Methods connections (pointing down)
+    Fusion -->|Methods ↓| FM
+    Quality -->|Metrics ↓| QM
+    Analytics -->|Methods ↓| AM
+    Anomaly -->|Methods ↓| ADM
+    Sensitivity -->|Methods ↓| SAM
+    Experiments -->|Designs ↓| VEM
+
+    %% Styling
+    classDef mappingCore fill:#ff6b6b,stroke:#c92a2a,stroke-width:4px,color:#fff
+    classDef sources fill:#4ecdc4,stroke:#2d9cdb,stroke-width:2px,color:#fff
+    classDef voxel fill:#95e1d3,stroke:#2d9cdb,stroke-width:2px
+    classDef apps fill:#ffe66d,stroke:#f39c12,stroke-width:2px
+    classDef methods fill:#fff9c4,stroke:#f57f17,stroke-width:2px
+
+    class Query,Transform,Voxelize,Interpolate,Store mappingCore
+    class Hatching,Laser,CT,ISPM sources
+    class Grid,Signals,Metadata voxel
+    class Fusion,Quality,Analytics,Anomaly,Sensitivity,Experiments apps
+    class F1,F2,F3,F4,Q1,Q2,Q3,Q4,A1,A2,A3,A4,AD1,AD2,AD3,AD4,SA1,SA2,SA3,SA4,VE1,VE2,VE3,VE4 methods
