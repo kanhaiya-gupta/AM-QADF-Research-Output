@@ -1,18 +1,18 @@
 flowchart LR
-    subgraph Query["Query: Point-Based Data<br/>(Spatial & temporal filters)"]
+    subgraph Query["Query: Point-Based Data"]
         P1["Point 1<br/>(x₁, y₁, z₁, value₁)"]
         P2["Point 2<br/>(x₂, y₂, z₂, value₂)"]
         P3["Point N<br/>(xₙ, yₙ, zₙ, valueₙ)"]
     end
 
     subgraph Process["Signal Mapping Process"]
-        Step1["1. Coordinate<br/>Transformation<br/>& Synchronization<br/>Spatial alignment +<br/>Calibration correction"]
-        Step2["2. Voxel Index<br/>Calculation<br/>idx = floor((p - min) / res)"]
-        Step3["3. Interpolation/<br/>Aggregation<br/>Method: Nearest/Linear/IDW/KDE<br/>Aggregate: mean/max/min/sum"]
-        Step4["4. Signal Storage<br/>Store in voxel grid<br/>structure"]
+        Step1["1. Voxel Index<br/>Calculation<br/>idx = floor((coord - min) / res)"]
+        Step2["2. Group Points<br/>by Voxel"]
+        Step3["3. Interpolation<br/>& Aggregation<br/>Methods: Nearest/Linear/IDW/KDE<br/>Agg: mean/max/min/sum"]
+        Step4["4. Signal Storage<br/>Store in voxel grid"]
     end
 
-    subgraph Output["Unified Voxel Domain"]
+    subgraph Output["Voxel Grid Output"]
         V1["Voxel [i,j,k]<br/>Signal Value"]
         V2["Voxel [i+1,j,k]<br/>Signal Value"]
         V3["Voxel Grid<br/>Complete 3D Array"]

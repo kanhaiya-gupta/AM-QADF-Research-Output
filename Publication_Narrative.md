@@ -114,12 +114,58 @@ We developed a comprehensive **NoSQL data warehouse framework** with:
 
 ### Publication Structure
 
-#### Suggested Paper Outline
+Papers are ordered so that **alignment and synchronization (Paper 0)** come first: they define why transformation must happen *before* any analysis, and why our algorithms are chosen. Design details and algorithm rationale are documented in the repository (see references below).
+
+#### Paper 0: Spatial and Temporal Synchronization (Foundation)
+
+**Focus**: Transformation, spatial alignment, and temporal synchronization of multi-source PBF-LB/M data. This paper establishes that **alignment must be done before analysis** and presents the design and rationale for our algorithms.
+
+**Why this comes first**: Without a common coordinate system and consistent time/layer reference, fusion, signal mapping, and quality assessment are ill-defined. Paper 0 explains the problem, the point-first pipeline (transform points then voxelize), and why our approach is preferable to alternatives (e.g. grid-based alignment, RANSAC/point matching).
+
+**Design and algorithm rationale (where to read more)**:
+- **Spatial alignment**: Point-first, bounding-box corner correspondence only (no point-to-point correspondences). We try 24 rotational permutations × 56 triplets per permutation; fit a similarity transform (Kabsch + Umeyama) on 3 corners and validate on all 8; select best fit; validate with adaptive tolerance (1% of bbox extent). This avoids RANSAC, avoids grid resampling, and uses full extent by default for a stable transform.
+- **Temporal alignment**: Layer/time mapping and point-based temporal alignment so that “same layer” or “same time window” is well-defined across hatching, ISPM, CT, etc., before voxelization or fusion.
+- **Design docs** (in repository):
+  - `implementation_plan/new/SPATIAL_ALIGNMENT_DESIGN.md` — full spatial alignment design (bbox-corner, 24×56, Kabsch+Umeyama, validation, comparison old vs new).
+  - `implementation_plan/new/Temporal_Alignment_Design.md` — temporal alignment purpose, pipeline position, point-first rationale.
+  - `implementation_plan/new/Synchronization_Reorganize_Plan.md` — point vs grid pipeline, naming, pipeline view.
+  - `docs/AM_QADF/05-modules/synchronization.md` — module overview and workflow.
+  - `docs/AM_QADF/06-api-reference/synchronization-api.md` — API (e.g. `query_and_transform_points`).
+
+**Suggested outline for Paper 0**:
+1. Introduction (multi-source coordinate and time mismatch; need for alignment before analysis)
+2. Related work (registration, temporal alignment in AM)
+3. Design (point-first pipeline; spatial: bbox-corner correspondence, 24×56 fits, Kabsch+Umeyama, validation; temporal: layer/time mapping, point temporal alignment)
+4. Why our algorithm (comparison with grid-based alignment and point-matching; full extent, adaptive tolerance, best_ref_corners validation)
+5. Implementation and API
+6. Results (accuracy, robustness, performance)
+7. Conclusion
+
+#### Paper 0.5: Signal Processing and Correction (Foundation for Mapping)
+
+**Focus**: Signal processing (noise reduction, filtering, FFT) and correction (calibration, geometric distortion) so that the *values* fed into signal mapping are reliable. This paper sits **between Paper 0 (alignment) and Paper 1 (signal mapping)**.
+
+**Why Paper 0.5**: Signal mapping (Paper 1) answers *where* to put signal values (interpolation from points to voxels). Signal processing and correction answer *what* values to use: raw signals are noisy and can have systematic errors; we need filtering, noise reduction, calibration, and distortion correction **before** (or alongside) mapping. Paper 1 already states that calibration and correction are prerequisites; Paper 0.5 dedicates a full paper to their **design, algorithms, and implementation**, including the rationale for **Eigen** (linear algebra: Savitzky–Golay, RBF, calibration) and **KFR** (FFT, filters).
+
+**Scope**: Noise reduction (outlier detection, Gaussian, Savitzky–Golay, moving average, FFT/frequency filtering); calibration (reference-based, CalibrationManager); geometric correction (scaling, rotation, warping, validation); pipeline position (pre-mapping default, optional post-mapping/pre-fusion/post-fusion); Eigen and KFR integration.
+
+**Design docs (in repo)**: `implementation_plan/new/SIGNAL_PROCESSING_LIBRARIES.md`; `docs/AM_QADF/05-modules/processing.md`, `correction.md`; `docs/Infrastructure/third-party/eigen.md`, `kfr.md`.
+
+**Suggested outline for Paper 0.5**:
+1. Introduction (why process/correct before mapping; pipeline: align → process/correct → map)
+2. Related work (noise reduction, calibration, correction in AM; Eigen/KFR in scientific code)
+3. Noise reduction and filtering (outlier detection, smoothing, FFT/frequency filtering)
+4. Calibration and geometric correction (reference-based calibration, distortion models, validation, multi-stage application)
+5. Implementation: Eigen and KFR (rationale, integration, build status)
+6. Results (quality metrics, calibration/correction validation, performance)
+7. Conclusion
+
+#### Suggested Paper Outline (Framework overview)
 
 1. **Introduction**
    - PBF-LB/M data challenges
    - Need for unified representation
-   - Signal mapping as solution
+   - Signal mapping as solution (building on aligned data from Paper 0)
 
 2. **Related Work**
    - AM data management systems
@@ -127,10 +173,11 @@ We developed a comprehensive **NoSQL data warehouse framework** with:
    - Voxel-based representations
 
 3. **Methodology**
-   - Signal mapping framework
-   - Coordinate system transformation
+   - Signal mapping framework (assumes spatially and temporally aligned points from Paper 0, and optionally processed/corrected signals from Paper 0.5)
+   - Coordinate system transformation (see Paper 0)
    - Voxel grid generation
-   - Data synchronization algorithms
+   - Data synchronization algorithms (see Paper 0)
+   - Calibration and correction as prerequisites (see Paper 0.5 for design and algorithms)
 
 4. **System Architecture**
    - NoSQL data warehouse
@@ -156,6 +203,12 @@ We developed a comprehensive **NoSQL data warehouse framework** with:
 ### Target Venues
 
 #### Journal Papers
+0. **Paper 0 (Foundation)** — Spatial and temporal synchronization
+   - Focus: Transformation, spatial and temporal alignment of multi-source PBF-LB/M data; design and rationale (point-first, bbox-corner, 24×56 fits, Kabsch+Umeyama, validation). Design details: `implementation_plan/new/SPATIAL_ALIGNMENT_DESIGN.md`, `Temporal_Alignment_Design.md`; `docs/AM_QADF/05-modules/synchronization.md`.
+
+0.5. **Paper 0.5 (Foundation)** — Signal processing and correction
+   - Focus: Noise reduction, calibration, geometric correction; Eigen and KFR; pre-mapping quality. Design: `implementation_plan/new/SIGNAL_PROCESSING_LIBRARIES.md`; `docs/AM_QADF/05-modules/processing.md`, `correction.md`.
+
 1. **Additive Manufacturing** (Elsevier)
    - Focus: Signal mapping for AM data integration
    - Title: "Signal Mapping Framework for Multi-Source PBF-LB/M Data Integration in a Unified Voxel Domain"
@@ -211,11 +264,39 @@ We developed a comprehensive **NoSQL data warehouse framework** with:
 
 ## 📝 Publication Checklist
 
+### Paper 0: Spatial and Temporal Synchronization (Foundation)
+- [ ] Abstract (250 words)
+- [ ] Introduction (Multi-source coordinate/time mismatch; alignment before analysis)
+- [ ] Related Work (Registration, temporal alignment in AM)
+- [ ] Design (Point-first pipeline; spatial bbox-corner, 24×56, Kabsch+Umeyama; temporal layer/time)
+- [ ] Why our algorithm (Comparison with grid-based and point-matching; validation, tolerance)
+- [ ] Implementation and API
+- [ ] Results (Accuracy, robustness, performance)
+- [ ] Conclusion
+- [ ] References
+- [ ] Figures (Pipeline, bbox-corner, validation)
+- [ ] Tables (Old vs new alignment; quality metrics)
+
+**Design docs (in repo)**: `implementation_plan/new/SPATIAL_ALIGNMENT_DESIGN.md`, `Temporal_Alignment_Design.md`, `Synchronization_Reorganize_Plan.md`; `docs/AM_QADF/05-modules/synchronization.md`, `06-api-reference/synchronization-api.md`.
+
+### Paper 0.5: Signal Processing and Correction (Foundation for Mapping)
+- [ ] Abstract
+- [ ] Introduction (why process/correct before mapping; pipeline position)
+- [ ] Related Work (noise reduction, calibration, Eigen/KFR)
+- [ ] Noise reduction and filtering (outlier, smoothing, FFT)
+- [ ] Calibration and geometric correction (reference-based, distortion models, validation)
+- [ ] Implementation: Eigen and KFR
+- [ ] Results (quality metrics, validation, performance)
+- [ ] Conclusion
+- [ ] References, Figures, Tables
+
+**Design docs (in repo)**: `implementation_plan/new/SIGNAL_PROCESSING_LIBRARIES.md`; `docs/AM_QADF/05-modules/processing.md`, `correction.md`; `docs/Infrastructure/third-party/eigen.md`, `kfr.md`.
+
 ### Paper 1: Signal Mapping Framework (Primary Contribution)
 - [ ] Abstract (250 words)
 - [ ] Introduction (Problem statement, motivation)
 - [ ] Related Work (Literature review)
-- [ ] Methodology (Signal mapping algorithms)
+- [ ] Methodology (Signal mapping algorithms; assumes Paper 0 alignment)
 - [ ] System Architecture (Data warehouse, clients)
 - [ ] Results (Case studies, performance)
 - [ ] Discussion (Advantages, limitations)

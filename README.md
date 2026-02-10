@@ -7,7 +7,7 @@ This repository contains all research publications, posters, and supporting docu
 ## 📋 Repository Overview
 
 This is a **private Git repository** dedicated to managing research publications, including:
-- **Research Papers** (Paper1, Paper2, Paper3)
+- **Research Papers** (Paper0, Paper0.5, Paper1, Paper2, Paper3)
 - **Conference Posters** (Poster1, Poster2, Poster3)
 - **Supporting Documentation** (flowcharts, narratives, planning documents)
 - **Narrative Explanations** (detailed module descriptions for supervisor presentations)
@@ -16,19 +16,39 @@ This is a **private Git repository** dedicated to managing research publications
 
 ```
 publications/
+├── Paper0/              # Spatial and Temporal Synchronization (Foundation)
 ├── Paper1/              # Signal Mapping Framework Paper
 ├── Paper2/              # Analysis Capabilities Paper
 ├── Paper3/              # Framework Application Paper
-├── Poster1/            # Signal Mapping Framework Poster
-├── Poster2/            # Analysis Capabilities Poster
-├── Poster3/            # Framework Application Poster
-├── flowchart_images/    # Mermaid diagrams and PNG images
-├── plots/              # Generated plots and figures
+├── Poster1/             # Signal Mapping Framework Poster
+├── Poster2/             # Analysis Capabilities Poster
+├── Poster3/             # Framework Application Poster
+├── flowchart_images/     # Mermaid diagrams and PNG images
+├── plots/               # Generated plots and figures
 ├── Publication_Narrative.md  # Overall research narrative
-└── Poster_Planning.md  # Poster planning and design notes
+└── Poster_Planning.md   # Poster planning and design notes
 ```
 
 ## 📄 Papers
+
+### Paper 0: Spatial and Temporal Synchronization (Foundation)
+**Focus**: Transformation, spatial alignment, and temporal synchronization of multi-source PBF-LB/M data. This paper establishes **why alignment must be done before any analysis** and presents the design and rationale for our algorithms (point-first pipeline, bbox-corner correspondence, 24×56 fits, Kabsch+Umeyama, validation, temporal layer/time alignment).
+
+**Design and algorithm rationale** — full design docs live in the main repository:
+- **`implementation_plan/new/SPATIAL_ALIGNMENT_DESIGN.md`** — spatial alignment (bbox-corner, 24×56, Kabsch+Umeyama, validation, old vs new comparison)
+- **`implementation_plan/new/Temporal_Alignment_Design.md`** — temporal alignment (point-first, layer/time, pipeline position)
+- **`implementation_plan/new/Synchronization_Reorganize_Plan.md`** — point vs grid pipeline, naming
+- **`docs/AM_QADF/05-modules/synchronization.md`** — module overview and workflow
+- **`docs/AM_QADF/06-api-reference/synchronization-api.md`** — API (e.g. `query_and_transform_points`)
+
+**Location**: [`Paper0/`](Paper0/)
+
+### Paper 0.5: Signal Processing and Correction (Foundation for Mapping)
+**Focus**: Signal processing (noise reduction, filtering, FFT) and correction (calibration, geometric distortion) so that the *values* fed into signal mapping are reliable. Sits between Paper 0 (alignment) and Paper 1 (signal mapping). Covers rationale for **Eigen** (linear algebra: Savitzky–Golay, RBF, calibration) and **KFR** (FFT, filters).
+
+**Design docs (main repo)**: `implementation_plan/new/SIGNAL_PROCESSING_LIBRARIES.md`; `docs/AM_QADF/05-modules/processing.md`, `correction.md`; `docs/Infrastructure/third-party/eigen.md`, `kfr.md`.
+
+**Location**: [`Paper0.5/`](Paper0.5/)
 
 ### Paper 1: Signal Mapping Framework
 **Title**: Unified Voxel Domain Signal Mapping for Multi-Source PBF-LB/M Process Data  
@@ -202,6 +222,8 @@ All markdown files should:
 
 ## 🔍 Quick Navigation
 
+- **Paper 0 Overview**: [`Paper0/README.md`](Paper0/README.md) — synchronization/transformation; design docs in main repo `implementation_plan/new/` and `docs/AM_QADF/`
+- **Paper 0.5 Overview**: [`Paper0.5/README.md`](Paper0.5/README.md) — signal processing and correction; Eigen and KFR; design docs in main repo `implementation_plan/new/`, `docs/AM_QADF/`, `docs/Infrastructure/third-party/`
 - **Paper 1 Overview**: [`Paper1/README.md`](Paper1/README.md)
 - **Quality Assessment Narrative**: [`Paper1/quality-assessment.md`](Paper1/quality-assessment.md)
 - **Data Fusion Narrative**: [`Paper1/data-fusion.md`](Paper1/data-fusion.md)
