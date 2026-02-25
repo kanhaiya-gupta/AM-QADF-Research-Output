@@ -47,7 +47,24 @@ Brief overview of each paper. Open the linked folder or README for full structur
 
 **Why read it:** Foundation for Papers 3–5; without a common coordinate system and time/layer reference, signal mapping and analysis are ill-defined. This paper gives the full algorithm (bbox-corner, 24×56 fits, Kabsch+Umeyama, validation) and why we prefer it over grid-based alignment or RANSAC/point matching.
 
-**Pipeline (point-first):** (1) **Query** (optional layer/bbox filters for output; transform uses full extent by default) → (2) **Compute bbox** per source, 8 corners in fixed order → (3) **Fit transformation**: 24 permutations × 56 triplets, **Kabsch** (optimal rotation from SVD of cross-covariance) + **Umeyama** (scale *s*, translation **t**) → (4) **Select** fit with smallest **max error** on all 8 corners → (5) **Validate** using **best_ref_corners** (reordered by best permutation) and **adaptive tolerance** τ = max(0.01×*L*_max, 1e−3, τ_user) → (6) **Transform** all points to reference frame; unified bounds → (7) **Optional temporal**: LayerTimeMapper, bin by layer or time window → output transformed points, signals, metadata.
+**Pipeline (point-first):**
+
+```mermaid
+flowchart LR
+    subgraph P1["Paper 1: Spatial & Temporal Sync"]
+        A["1. Query<br/>(full extent for transform)"]
+        B["2. Compute bbox<br/>8 corners per source"]
+        C["3. Fit: 24×56<br/>Kabsch + Umeyama"]
+        D["4. Select<br/>smallest max error"]
+        E["5. Validate<br/>best_ref_corners, τ"]
+        F["6. Transform<br/>all points"]
+        G["7. Optional temporal<br/>LayerTimeMapper"]
+        H["Output"]
+        A --> B --> C --> D --> E --> F --> G --> H
+    end
+```
+
+*Details:* Query (optional layer/bbox for output); fit = 24 permutations × 56 triplets, Kabsch (rotation) + Umeyama (scale, translation); validate with τ = max(0.01×L_max, 1e−3, τ_user); then transform; optional bin by layer/time.
 
 **Spatial alignment (bbox-corner only):**
 
@@ -77,7 +94,21 @@ Brief overview of each paper. Open the linked folder or README for full structur
 
 **Why read it:** Raw signals are noisy and can have systematic errors; this paper defines the algorithms and library choices so that the data fed into the voxel domain is reliable and traceable (SNR, calibration error, correction residual).
 
-**Pipeline position:** Aligned points/signals (Paper 1) → **outlier detection** → **smoothing** → optional **FFT/frequency filter** → **calibration** → **geometric correction** → processed, corrected signals → Paper 3 (signal mapping).
+**Pipeline position:**
+
+```mermaid
+flowchart LR
+    subgraph P2["Paper 2: Processing & Correction"]
+        A["Paper 1<br/>aligned data"]
+        B["Outlier<br/>detection"]
+        C["Smoothing"]
+        D["Optional FFT"]
+        E["Calibration"]
+        F["Geometric<br/>correction"]
+        G["Paper 3<br/>signal mapping"]
+        A --> B --> C --> D --> E --> F --> G
+    end
+```
 
 **Noise reduction and filtering:**
 
@@ -106,7 +137,21 @@ Brief overview of each paper. Open the linked folder or README for full structur
 
 **Why read it:** Defines the five-step mapping pipeline and the five interpolation methods (nearest, linear, IDW, KDE, RBF) with formulas, grid types (uniform, adaptive, multi-resolution), and when to use each—so implementers and reviewers see the algorithms in one place.
 
-**Signal mapping process (5 steps):** (1) Query raw data with spatial/temporal filters → (2) Coordinate system transformation (unify reference frames, apply calibration) → (3) Voxel index calculation (point → voxel indices) → (4) **Interpolation/aggregation** (assign signal values to voxels) → (5) Storage in voxel grid. When multiple points fall in one voxel, aggregation uses **mean**, **max**, **min**, or **sum**.
+**Signal mapping process (5 steps):**
+
+```mermaid
+flowchart LR
+    subgraph P3["Paper 3: Signal Mapping"]
+        A["1. Query<br/>raw data"]
+        B["2. Coord.<br/>transform"]
+        C["3. Voxel index"]
+        D["4. Interpolate /<br/>aggregate"]
+        E["5. Store<br/>voxel grid"]
+        A --> B --> C --> D --> E
+    end
+```
+
+*Step 4:* Nearest, Linear, IDW, KDE, or RBF; aggregation = mean/max/min/sum when multiple points per voxel.
 
 **Interpolation algorithms** (step 4):
 
