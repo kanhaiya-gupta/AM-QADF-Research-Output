@@ -51,17 +51,7 @@ Brief overview of each paper. Open the linked folder or README for full structur
 
 ```mermaid
 flowchart LR
-    subgraph P1["Paper 1: Spatial & Temporal Sync"]
-        A["1. Query<br/>(full extent for transform)"]
-        B["2. Compute bbox<br/>8 corners per source"]
-        C["3. Fit: 24×56<br/>Kabsch + Umeyama"]
-        D["4. Select<br/>smallest max error"]
-        E["5. Validate<br/>best_ref_corners, τ"]
-        F["6. Transform<br/>all points"]
-        G["7. Optional temporal<br/>LayerTimeMapper"]
-        H["Output"]
-        A --> B --> C --> D --> E --> F --> G --> H
-    end
+    A[1. Query] --> B[2. Bbox 8 corners] --> C[3. Fit 24×56 Kabsch+Umeyama] --> D[4. Select min max err] --> E[5. Validate τ] --> F[6. Transform] --> G[7. Temporal] --> H[Output]
 ```
 
 *Details:* Query (optional layer/bbox for output); fit = 24 permutations × 56 triplets, Kabsch (rotation) + Umeyama (scale, translation); validate with τ = max(0.01×L_max, 1e−3, τ_user); then transform; optional bin by layer/time.
@@ -98,16 +88,7 @@ flowchart LR
 
 ```mermaid
 flowchart LR
-    subgraph P2["Paper 2: Processing & Correction"]
-        A["Paper 1<br/>aligned data"]
-        B["Outlier<br/>detection"]
-        C["Smoothing"]
-        D["Optional FFT"]
-        E["Calibration"]
-        F["Geometric<br/>correction"]
-        G["Paper 3<br/>signal mapping"]
-        A --> B --> C --> D --> E --> F --> G
-    end
+    A[P1 aligned] --> B[Outlier] --> C[Smooth] --> D[FFT] --> E[Calibrate] --> F[Geom correct] --> G[P3 map]
 ```
 
 **Noise reduction and filtering:**
@@ -141,14 +122,7 @@ flowchart LR
 
 ```mermaid
 flowchart LR
-    subgraph P3["Paper 3: Signal Mapping"]
-        A["1. Query<br/>raw data"]
-        B["2. Coord.<br/>transform"]
-        C["3. Voxel index"]
-        D["4. Interpolate /<br/>aggregate"]
-        E["5. Store<br/>voxel grid"]
-        A --> B --> C --> D --> E
-    end
+    A[1. Query] --> B[2. Coord transform] --> C[3. Voxel index] --> D[4. Interpolate] --> E[5. Store grid]
 ```
 
 *Step 4:* Nearest, Linear, IDW, KDE, or RBF; aggregation = mean/max/min/sum when multiple points per voxel.
