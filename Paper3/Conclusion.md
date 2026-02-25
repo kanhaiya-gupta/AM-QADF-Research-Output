@@ -1,76 +1,118 @@
 # Conclusion
 
-## Summary
+## Summary of Contributions
 
-This paper presented the industrial application of a comprehensive data analysis framework for PBF-LB/M additive manufacturing. Through three detailed use cases—process optimization, real-time quality control, and root cause analysis—we demonstrated how the framework (comprising signal mapping from Paper 1 and analysis capabilities from Paper 2) addresses real-world industrial challenges.
+This paper presented a comprehensive signal mapping framework for multi-source PBF-LB/M data integration in a unified voxel domain. The key contributions are:
 
-### Key Industrial Applications
+### 1. Signal Mapping Framework
 
-1. **Process Optimization**: 35% reduction in process development time through sensitivity analysis and virtual experiments
-2. **Quality Control**: 28% reduction in defect rates through real-time anomaly detection
-3. **Root Cause Analysis**: 85-90% reduction in analysis time through multi-signal correlation analysis
+We developed the first comprehensive framework for transforming heterogeneous point-based data from multiple sources (hatching paths, laser parameters, CT scans, ISPM monitoring) into a unified 3D voxel domain representation. The framework provides:
 
-### Quantitative Results
+- **Systematic Five-Step Process**: Query, coordinate transformation, voxel index calculation, interpolation/aggregation, and signal storage
+- **Flexible Interpolation Methods**: Four implemented methods (nearest neighbor, linear, IDW, Gaussian KDE) with comprehensive selection criteria for method choice
+- **Calibration and Correction**: Pre-mapping calibration correction framework with support for scaling, rotation, and warping distortion models
+- **Variable Resolution Grids**: Support for uniform, adaptive, and multi-resolution voxel grids with selection criteria based on data characteristics and analysis requirements
+- **Quality Assessment**: Comprehensive quality metrics including completeness, alignment accuracy, and signal quality
 
-The industrial deployment demonstrated:
-- **Time Savings**: 85-90% reduction in analysis time across all tasks
-- **Quality Improvement**: 28% reduction in defect rates, 65% early detection rate
-- **Cost Savings**: $312,000/year in operational cost savings
-- **ROI**: 247% return on investment with 3.5-month payback period
+### 2. Coordinate System Transformation and Calibration
+
+We developed automatic coordinate system transformation algorithms that:
+- Detect coordinate systems from metadata in each data source
+- Calculate transformation matrices using hierarchical coordinate system registry
+- Apply calibration corrections (scaling, rotation, warping) during transformation
+- Validate transformations with sub-voxel accuracy (<1 voxel error in 95% of cases)
+- Support multiple coordinate systems (build platform, CT scanner, ISPM sensor)
+
+### 3. Data Synchronization
+
+We implemented temporal and spatial synchronization algorithms that:
+- Align data from different temporal resolutions (real-time, layer-based, post-build)
+- Map timestamps to build layers with ±0.1 layer accuracy
+- Handle missing data and temporal gaps
+- Ensure spatial alignment across all data sources
+
+### 4. NoSQL Data Warehouse Architecture
+
+We extended the existing NoSQL backend to a full data warehouse with:
+- MongoDB document store for flexible PBF process data (5 collections: STL models, hatching layers, laser parameters, CT scans, ISPM monitoring)
+- GridFS for large binary files (CT voxel arrays, voxel grids)
+- Specialized query clients for each data source with standardized interface
+- Unified query client for multi-source queries with automatic coordinate transformation
+
+### 5. Performance and Scalability
+
+The framework demonstrates:
+- **Linear Complexity**: O(N) processing time for N data points
+- **Data Volume Reduction**: 60-80% reduction while preserving spatial relationships
+- **Scalability**: Successfully handles >1 million data points and >10 million voxel grids
+- **Processing Throughput**: ~8,000 points/second for uniform grids
+
+### 6. Interactive Analysis Framework
+
+We developed seven interactive Jupyter notebooks providing:
+- Widget-based interfaces for non-programmers
+- Real-time visualization and parameter adjustment
+- Complete workflows from data querying to advanced analysis
+- Integration with all framework components
+
+## Impact and Applications
+
+### Scientific Impact
+
+The signal mapping framework enables new research capabilities:
+
+1. **Multi-Source Correlation Analysis**: Direct comparison of process parameters, monitoring data, and quality outcomes at the same spatial locations
+2. **Spatial-Temporal Analysis**: Understanding how process conditions vary both spatially and temporally across build layers
+3. **Quality Assessment**: Comprehensive quality metrics enabling systematic evaluation of data completeness and signal quality
+4. **Anomaly Detection**: Spatial localization of process anomalies through unified representation
+5. **Process Understanding**: Enhanced understanding of process-measurement relationships through integrated analysis
 
 ### Practical Impact
 
-The framework provides practical value:
-- **Operational Efficiency**: Significant time savings enable focus on high-value tasks
-- **Quality Improvement**: Real-time detection and early intervention reduce scrap rates
-- **Process Understanding**: Data-driven insights enable systematic optimization
-- **Knowledge Management**: Systematic workflows preserve and share knowledge
+The framework provides practical benefits for industrial applications:
 
-## Industrial Value Proposition
+1. **Data Integration**: Unified representation of all PBF-LB/M data sources eliminates the need for separate analysis tools
+2. **Efficiency**: Data volume reduction (60-80%) enables faster analysis and reduced storage costs
+3. **Quality Control**: Quality metrics enable systematic assessment of data completeness and reliability
+4. **Process Optimization**: Multi-signal correlation analysis enables identification of optimal process parameters
+5. **Anomaly Detection**: Early detection of process issues through spatial-temporal analysis
 
-The framework successfully translates research capabilities into practical industrial tools by:
+### Methodological Contributions
 
-1. **Eliminating Manual Work**: Warehouse integration eliminates 85-90% of data preparation time
-2. **Enabling Non-Programmers**: Interactive notebooks make advanced analysis accessible
-3. **Providing Real-Time Capabilities**: Real-time anomaly detection enables early intervention
-4. **Ensuring Quality**: Systematic workflows and quality assessment ensure reliable results
-5. **Supporting Scalability**: Modular architecture supports growth and expansion
+The framework contributes methodologically to:
 
-## Lessons for Industry
+1. **Signal Mapping Algorithms**: Novel approach to mapping heterogeneous point data to voxel grids with quality assessment
+2. **Coordinate System Transformation**: Automatic alignment framework for multi-source data with calibration correction
+3. **Temporal Synchronization**: Layer-based and time-based alignment algorithms
+4. **Interpolation Method Selection**: Comprehensive criteria for selecting appropriate interpolation methods from four implemented options
+5. **Grid Type Selection**: Decision framework for choosing optimal grid types based on use case
+6. **Calibration and Correction Framework**: Systematic approach to handling systematic errors and geometric distortions
 
-Key lessons for industrial deployment:
+### Applications
 
-1. **Warehouse Integration is Essential**: Direct data access eliminates manual work and ensures consistency
-2. **User Experience Drives Adoption**: User-friendly interfaces are critical for successful deployment
-3. **Systematic Workflows Ensure Quality**: Guided workflows improve consistency and reduce errors
-4. **Performance Matters**: Real-time applications require careful performance optimization
-5. **Documentation Enables Success**: Comprehensive documentation and training are essential
+The framework enables various applications:
+
+1. **Process Monitoring**: Real-time monitoring of process conditions through unified voxel representation
+2. **Quality Control**: Systematic quality assessment using completeness and signal quality metrics
+3. **Defect Analysis**: Spatial correlation of process conditions with defect locations
+4. **Process Optimization**: Identification of optimal process parameters through multi-signal analysis
+5. **Research**: Foundation for advanced analysis including sensitivity analysis and virtual experiments
 
 ## Future Directions
 
-The framework provides a foundation for future capabilities:
+While the current framework provides a solid foundation with four implemented interpolation methods, several directions for future work have been identified:
 
-1. **Machine Learning Integration**: Predictive models and automated optimization
-2. **Advanced Automation**: Automated quality control and process adjustment
-3. **Cloud Deployment**: Scalable cloud-based deployments for multi-site operations
-4. **Enhanced Integration**: Integration with ERP, MES, and other manufacturing systems
-5. **Real-Time Control**: Real-time process control based on analysis results
+1. **Enhancement of Existing Methods**: Adaptive parameter selection, optimization for very large datasets, and improved parameter tuning guidance
+2. **Uncertainty Quantification**: Full uncertainty propagation from measurements to voxel values, leveraging Gaussian KDE's natural uncertainty handling
+3. **Advanced Methods**: Implementation of Radial Basis Functions (RBF) for exact interpolation and physics-informed mapping incorporating physical constraints
+4. **Learning-Based Methods**: Neural network approaches for optimal mapping strategies
+5. **Real-Time Processing**: Optimization for real-time signal mapping during build process
 
 ## Final Remarks
 
-This work demonstrates that research frameworks can be successfully translated into practical industrial tools. The framework's warehouse integration, user-friendly interfaces, and systematic workflows enable process engineers to perform advanced analysis that was previously inaccessible or required extensive programming expertise.
+The signal mapping framework presented in this work provides a comprehensive solution for multi-source PBF-LB/M data integration. By transforming heterogeneous point-based data into a unified voxel domain representation, the framework enables new analysis capabilities that were not possible with separate data sources. The systematic approach to coordinate system transformation with calibration correction, temporal synchronization, and quality assessment ensures reliable and accurate data integration.
 
-The industrial deployment validates the framework's practical utility, demonstrating significant improvements in efficiency, quality, and cost savings. The lessons learned provide guidance for future framework development and industrial deployments, ensuring successful translation of research capabilities into practical industrial tools.
+The framework's extensible design, comprehensive selection criteria for four implemented interpolation methods, and interactive analysis tools make it suitable for both research and industrial applications. As the framework evolves with uncertainty quantification and advanced methods, it will continue to enhance our understanding of PBF-LB/M processes and enable improved quality control and process optimization.
 
-The framework, combined with signal mapping (Paper 1) and analysis capabilities (Paper 2), provides a complete solution for PBF-LB/M data integration and analysis, enabling industrial operations to unlock insights from multi-source data and advance the state of additive manufacturing process understanding and optimization.
-
-As PBF-LB/M continues to grow in industrial applications, frameworks like this will be essential for managing the complexity of multi-source data and enabling data-driven process optimization. This work provides a blueprint for applying advanced data analysis to additive manufacturing operations, demonstrating both the feasibility and value of comprehensive data integration and analysis frameworks.
-
-## Summary
-
-*[Content to be written]*
-
-## Future Directions
-
-*[Content to be written]*
+The signal mapping framework establishes a foundation for comprehensive PBF-LB/M process analysis, enabling researchers and practitioners to unlock insights from multi-source data that were previously inaccessible.
 

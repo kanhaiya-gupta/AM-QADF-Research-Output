@@ -7,7 +7,7 @@ This repository contains all research publications, posters, and supporting docu
 ## 📋 Repository Overview
 
 This is a **private Git repository** dedicated to managing research publications, including:
-- **Research Papers** (Paper0, Paper0.5, Paper1, Paper2, Paper3)
+- **Research Papers** (Paper1, Paper2, Paper3, Paper4, Paper5)
 - **Conference Posters** (Poster1, Poster2, Poster3)
 - **Supporting Documentation** (flowcharts, narratives, planning documents)
 - **Narrative Explanations** (detailed module descriptions for supervisor presentations)
@@ -16,10 +16,11 @@ This is a **private Git repository** dedicated to managing research publications
 
 ```
 publications/
-├── Paper0/              # Spatial and Temporal Synchronization (Foundation)
-├── Paper1/              # Signal Mapping Framework Paper
-├── Paper2/              # Analysis Capabilities Paper
-├── Paper3/              # Framework Application Paper
+├── Paper1/              # Spatial and Temporal Synchronization (Foundation)
+├── Paper2/              # Signal Processing and Correction (Foundation for Mapping)
+├── Paper3/              # Signal Mapping Framework Paper
+├── Paper4/              # Analysis Capabilities Paper
+├── Paper5/              # Framework Application Paper
 ├── Poster1/             # Signal Mapping Framework Poster
 ├── Poster2/             # Analysis Capabilities Poster
 ├── Poster3/             # Framework Application Poster
@@ -31,7 +32,7 @@ publications/
 
 ## 📄 Papers
 
-### Paper 0: Spatial and Temporal Synchronization (Foundation)
+### Paper 1: Spatial and Temporal Synchronization (Foundation)
 **Focus**: Transformation, spatial alignment, and temporal synchronization of multi-source PBF-LB/M data. This paper establishes **why alignment must be done before any analysis** and presents the design and rationale for our algorithms (point-first pipeline, bbox-corner correspondence, 24×56 fits, Kabsch+Umeyama, validation, temporal layer/time alignment).
 
 **Design and algorithm rationale** — full design docs live in the main repository:
@@ -41,16 +42,16 @@ publications/
 - **`docs/AM_QADF/05-modules/synchronization.md`** — module overview and workflow
 - **`docs/AM_QADF/06-api-reference/synchronization-api.md`** — API (e.g. `query_and_transform_points`)
 
-**Location**: [`Paper0/`](Paper0/)
+**Location**: [`Paper1/`](Paper1/)
 
-### Paper 0.5: Signal Processing and Correction (Foundation for Mapping)
-**Focus**: Signal processing (noise reduction, filtering, FFT) and correction (calibration, geometric distortion) so that the *values* fed into signal mapping are reliable. Sits between Paper 0 (alignment) and Paper 1 (signal mapping). Covers rationale for **Eigen** (linear algebra: Savitzky–Golay, RBF, calibration) and **KFR** (FFT, filters).
+### Paper 2: Signal Processing and Correction (Foundation for Mapping)
+**Focus**: Signal processing (noise reduction, filtering, FFT) and correction (calibration, geometric distortion) so that the *values* fed into signal mapping are reliable. Sits between Paper 1 (alignment) and Paper 3 (signal mapping). Covers rationale for **Eigen** (linear algebra: Savitzky–Golay, RBF, calibration) and **KFR** (FFT, filters).
 
 **Design docs (main repo)**: `implementation_plan/new/SIGNAL_PROCESSING_LIBRARIES.md`; `docs/AM_QADF/05-modules/processing.md`, `correction.md`; `docs/Infrastructure/third-party/eigen.md`, `kfr.md`.
 
-**Location**: [`Paper0.5/`](Paper0.5/)
+**Location**: [`Paper2/`](Paper2/)
 
-### Paper 1: Signal Mapping Framework
+### Paper 3: Signal Mapping Framework
 **Title**: Unified Voxel Domain Signal Mapping for Multi-Source PBF-LB/M Process Data  
 **Target Venue**: Additive Manufacturing (Elsevier)  
 **Status**: ✅ Complete - Ready for Review
@@ -61,22 +62,22 @@ publications/
 - Quality Assessment Module (see `quality-assessment.md`)
 - Data Fusion Module (see `data-fusion.md`)
 
-**Location**: [`Paper1/`](Paper1/)
+**Location**: [`Paper3/`](Paper3/)
 
 **Key Files:**
 - `quality-assessment.md` - Comprehensive narrative on quality assessment module
 - `data-fusion.md` - Comprehensive narrative on data fusion module
 - `README.md` - Paper structure and organization
 
-### Paper 2: Analysis Capabilities
+### Paper 4: Analysis Capabilities
 **Focus**: Advanced analytics, statistical analysis, and process optimization capabilities
 
-**Location**: [`Paper2/`](Paper2/)
+**Location**: [`Paper4/`](Paper4/)
 
-### Paper 3: Framework Application
+### Paper 5: Framework Application
 **Focus**: Industrial deployment, case studies, and real-world applications
 
-**Location**: [`Paper3/`](Paper3/)
+**Location**: [`Paper5/`](Paper5/)
 
 ## 🎨 Posters
 
@@ -141,7 +142,7 @@ These narratives explain:
 
 ### For Reviewers
 
-1. **Start with Paper1/README.md**: Overview of paper structure
+1. **Start with Paper3/README.md**: Overview of paper structure
 2. **Review sections in order**: Abstract → Introduction → Methodology → Results
 3. **Check narrative files**: `quality-assessment.md` and `data-fusion.md` for detailed explanations
 4. **Review flowcharts**: Visual representations in `flowchart_images/`
@@ -166,7 +167,7 @@ git init
 
 2. **Commit frequently** with descriptive messages:
    ```bash
-   git add Paper1/quality-assessment.md
+   git add Paper3/quality-assessment.md
    git commit -m "Add comprehensive quality assessment narrative"
    ```
 
@@ -178,7 +179,7 @@ git init
 
 4. **Tag releases** for paper submissions:
    ```bash
-   git tag -a v1.0-paper1-submission -m "Paper 1 submission version"
+   git tag -a v1.0-paper3-submission -m "Paper 3 submission version"
    ```
 
 ## 🔒 Privacy and Access
@@ -222,11 +223,11 @@ All markdown files should:
 
 ## 🔍 Quick Navigation
 
-- **Paper 0 Overview**: [`Paper0/README.md`](Paper0/README.md) — synchronization/transformation; design docs in main repo `implementation_plan/new/` and `docs/AM_QADF/`
-- **Paper 0.5 Overview**: [`Paper0.5/README.md`](Paper0.5/README.md) — signal processing and correction; Eigen and KFR; design docs in main repo `implementation_plan/new/`, `docs/AM_QADF/`, `docs/Infrastructure/third-party/`
-- **Paper 1 Overview**: [`Paper1/README.md`](Paper1/README.md)
-- **Quality Assessment Narrative**: [`Paper1/quality-assessment.md`](Paper1/quality-assessment.md)
-- **Data Fusion Narrative**: [`Paper1/data-fusion.md`](Paper1/data-fusion.md)
+- **Paper 1 Overview**: [`Paper1/README.md`](Paper1/README.md) — synchronization/transformation; design docs in main repo `implementation_plan/new/` and `docs/AM_QADF/`
+- **Paper 2 Overview**: [`Paper2/README.md`](Paper2/README.md) — signal processing and correction; Eigen and KFR; design docs in main repo `implementation_plan/new/`, `docs/AM_QADF/`, `docs/Infrastructure/third-party/`
+- **Paper 3 Overview**: [`Paper3/README.md`](Paper3/README.md)
+- **Quality Assessment Narrative**: [`Paper3/quality-assessment.md`](Paper3/quality-assessment.md)
+- **Data Fusion Narrative**: [`Paper3/data-fusion.md`](Paper3/data-fusion.md)
 - **Research Narrative**: [`Publication_Narrative.md`](Publication_Narrative.md)
 - **Flowchart Images**: [`flowchart_images/`](flowchart_images/)
 

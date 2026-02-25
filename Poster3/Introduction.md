@@ -1,32 +1,30 @@
 # Introduction
 
-## Research Context
+## Problem Statement
 
-This work was conducted within the framework of the **LuFo VII (Luftfahrtforschungsprogramm VII) aeronautical research program**, focusing on **digital quality assessment of additively manufactured metallic aircraft components** in cooperation with industry partners.
+Powder Bed Fusion - Laser Beam/Metal (PBF-LB/M) additive manufacturing generates **massive, heterogeneous datasets** from multiple sources:
 
-## Industrial Challenge
+- **Hatching Paths**: Hundreds of thousands of scan path points
+- **Laser Parameters**: Real-time process measurements
+- **CT Scans**: Post-build 3D imaging with millions of voxels
+- **ISPM Monitoring**: In-situ temperature and process data
 
-Aerospace PBF-LB/M operations face critical challenges:
+## The Challenge
 
-- **Strict Quality Standards**: Aerospace certification requirements (FAA, EASA)
-- **Multi-Source Data**: Hatching, laser, CT, ISPM data in different formats
-- **Real-Time Quality Control**: Need for early defect detection
-- **Process Optimization**: Systematic parameter optimization required
-- **Root Cause Analysis**: Identify causes of recurring defects
+Each data source has:
+- **Different Coordinate Systems**: Build platform, CT scanner, ISPM sensor
+- **Different Temporal Resolutions**: Real-time, layer-based, post-build
+- **Different Spatial Formats**: Point-based vs. voxel-based
+- **Different Data Formats**: Structured vs. unstructured
 
-## Framework Application
+**Result**: Unified analysis and quality assessment is extremely challenging.
 
-The comprehensive framework (Papers 1 & 2) was deployed in industrial aerospace production:
+## Our Solution
 
-- **Signal Mapping** (Paper 1): Unified voxel domain representation
-- **Analysis Framework** (Paper 2): 40 analysis methods with warehouse integration
-- **Industrial Deployment**: Real-world application in aircraft component production
+**Signal Mapping Framework** transforms heterogeneous point-based data into a **unified 3D voxel domain representation**, enabling:
 
-## Objectives
-
-Demonstrate practical value through three industrial use cases:
-
-1. **Process Optimization**: Digital quality assessment for aircraft component process development
-2. **Quality Control**: Real-time digital quality assessment and anomaly detection
-3. **Root Cause Analysis**: Digital quality assessment for defect reduction
+- ✅ Multi-source data fusion
+- ✅ Spatial-temporal analysis
+- ✅ Quality assessment
+- ✅ Comprehensive process analysis
 

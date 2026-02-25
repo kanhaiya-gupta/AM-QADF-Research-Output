@@ -1,103 +1,35 @@
 # Conclusion
 
-## Summary
+## Summary of Contributions
 
-This paper presented a comprehensive analysis framework for PBF-LB/M additive manufacturing that integrates 12 sensitivity analysis methods, 10 virtual experiment design types, and 8+ anomaly detection methods with a NoSQL data warehouse. The framework leverages the unified voxel domain representation (from Paper 1) to enable advanced spatial-temporal analysis, multi-signal correlation, and quality-based fusion.
+This paper established **signal processing and correction** as a required step **between** spatial and temporal alignment (Paper 1) and signal mapping (Paper 3). Raw process and monitoring signals are noisy and can contain systematic errors; applying noise reduction, calibration, and geometric correction **before** mapping ensures that the voxel-domain representation (Paper 3) and downstream analysis (Papers 4–5) are reliable.
 
-### Key Contributions
+### 1. Pipeline Position
 
-1. **Comprehensive Analysis Capabilities**
-   - Integration of 12 sensitivity analysis methods (global, local, uncertainty-based)
-   - Integration of 10 virtual experiment design types (basic, factorial, response surface, optimal)
-   - Integration of 8+ anomaly detection methods (statistical, clustering, ML-based, rule-based)
-   - Multi-signal fusion with quality-based weighting
+We made explicit the pipeline: **align (Paper 1) → process and correct (Paper 2) → map (Paper 3)**. Processing and correction answer *what* values to use; signal mapping answers *where* to put them. Paper 3 references calibration and correction as prerequisites; this paper provides their design, algorithms, and implementation.
 
-2. **Warehouse Integration Architecture**
-   - Seamless integration between analysis methods and NoSQL data warehouse
-   - Direct querying of process variables and measurement outputs
-   - Automatic parameter range extraction from historical builds
-   - Results storage and querying for reproducibility and comparison
+### 2. Noise Reduction and Filtering
 
-3. **Voxel Domain Analysis**
-   - Spatial-temporal analysis in unified voxel domain
-   - Multi-signal correlation at same spatial locations
-   - Quality-based fusion using per-voxel quality scores
-   - Spatial anomaly localization with voxel-level precision
+We described and implemented outlier detection (IQR, z-score), smoothing (Gaussian, Savitzky–Golay, moving average), and frequency-domain filtering (FFT, inverse FFT, lowpass/highpass/bandpass). Savitzky–Golay uses **Eigen** for the convolution/polynomial matrix; FFT and frequency filtering are intended to use **KFR** (or FFTW when KFR is not enabled). C++ back ends and Python wrappers provide a unified noise-reduction pipeline.
 
-4. **Interactive Analysis Tools**
-   - Seven interactive Jupyter notebooks with widget-based interfaces
-   - Real-time visualization and parameter adjustment
-   - Guided workflows for non-programmers
-   - Comprehensive error handling and validation
+### 3. Calibration and Geometric Correction
 
-5. **Systematic Analysis Frameworks**
-   - Systematic workflows for sensitivity analysis, virtual experiments, and anomaly detection
-   - Method selection criteria and comparison tables
-   - Best practices and recommendations
+We described reference-based calibration (CalibrationManager, reference measurements, calibration data) and geometric distortion correction (scaling, rotation, warping, combined). Validation metrics (mean/max/RMS error) support pass/fail and reporting. Application can be pre-mapping (default), post-mapping, pre-fusion, or post-fusion, as documented in Paper 3.
 
-### Results Summary
+### 4. Why Eigen and KFR
 
-The framework demonstrates:
-- **Efficient Performance**: Fast execution times (8-142 seconds depending on method)
-- **High Accuracy**: Sensitivity indices validated against known influences, 78% prediction accuracy for virtual experiments, 78% spatial accuracy for anomaly detection
-- **Warehouse Integration**: <5 seconds for multi-source queries, automatic parameter range extraction
-- **Comprehensive Coverage**: 12 sensitivity methods, 10 experiment designs, 18 anomaly detection methods
+We justified **Eigen** for linear algebra (Savitzky–Golay, RBF systems, calibration fits): header-only, already in use, sufficient performance. We justified **KFR** for FFT and filters: SIMD-optimized, optional header-only use, recommended in the implementation plan alongside Eigen. We noted that KFR is available in third_party and can be enabled in the build for full FFT/filter support.
+
+### 5. Implementation and API
+
+We summarized the C++ components (SignalProcessing, SignalNoiseReduction, calibration, geometric correction, validation) and Python entry points (processing.noise_reduction, correction). Design and API details are in the repository (processing and correction modules, processing-api and correction-api, third-party docs).
 
 ## Impact
 
-### Scientific Impact
+- **Foundation for Paper 3**: Signal mapping (Paper 3) assumes optionally processed and corrected signals; this paper defines and implements that step.
+- **Quality and traceability**: Calibration parameters and correction models can be stored; validation metrics support reproducibility and audit.
+- **Consistent stack**: Eigen (and KFR when enabled) provide a single, modern stack for signal processing and correction without unnecessary dependencies.
 
-The framework enables new research capabilities:
+## Closing Remark
 
-1. **Process Understanding**: Systematic sensitivity analysis reveals process-measurement relationships
-2. **Parameter Optimization**: Virtual experiments enable efficient parameter space exploration
-3. **Quality Control**: Anomaly detection enables early identification of process issues
-4. **Multi-Signal Analysis**: Unified voxel domain enables correlation analysis not possible with separate data sources
-
-### Practical Impact
-
-The framework provides practical benefits:
-
-1. **Accessibility**: Non-programmers can perform advanced analysis through interactive notebooks
-2. **Efficiency**: Warehouse integration eliminates manual data preparation (saves hours per analysis)
-3. **Reproducibility**: Stored analysis configurations and results enable reproducibility
-4. **Scalability**: Can analyze data from multiple models/builds simultaneously
-5. **Cost Savings**: Virtual experiments reduce need for physical experiments
-
-### Methodological Impact
-
-The framework contributes methodologically:
-
-1. **Warehouse Integration Pattern**: Demonstrates how to integrate analysis methods with data warehouses
-2. **Voxel Domain Analysis**: Shows how unified spatial representations enable new analysis capabilities
-3. **Systematic Frameworks**: Provides systematic approaches for complex analysis workflows
-4. **Method Selection**: Comprehensive criteria for selecting appropriate analysis methods
-
-### Applications
-
-The framework enables various applications:
-
-1. **Process Development**: Sensitivity analysis guides process development efforts
-2. **Process Optimization**: Virtual experiments identify optimal process parameters
-3. **Quality Control**: Anomaly detection enables real-time quality monitoring
-4. **Research**: Foundation for advanced research in process understanding and optimization
-5. **Education**: Interactive notebooks serve as educational tools
-
-## Future Directions
-
-While the framework provides comprehensive capabilities, several directions for future work have been identified:
-
-1. **Method Expansion**: Implement remaining sensitivity methods and experiment designs
-2. **Real-Time Analysis**: Optimization for real-time analysis during build process
-3. **Advanced ML Methods**: Deep learning approaches for anomaly detection and prediction
-4. **Automated Optimization**: Automated process optimization using analysis results
-5. **Uncertainty Quantification**: Full uncertainty propagation through analysis pipeline
-
-## Final Remarks
-
-The analysis framework presented in this work provides a comprehensive solution for PBF-LB/M process analysis. By integrating 12 sensitivity analysis methods, 10 virtual experiment design types, and 8+ anomaly detection methods with the NoSQL data warehouse, the framework enables advanced analysis capabilities that were previously inaccessible or required extensive programming expertise.
-
-The warehouse integration eliminates manual data preparation, making the framework practical for industrial use. The interactive notebooks make advanced analysis accessible to non-programmers, democratizing access to sophisticated analysis methods. The systematic frameworks ensure consistent, high-quality analysis.
-
-The framework, combined with the signal mapping framework (Paper 1), provides a complete solution for PBF-LB/M data integration and analysis, enabling researchers and practitioners to unlock insights from multi-source data and advance the state of additive manufacturing process understanding and optimization.
-
+Signal processing and correction are not an afterthought but a **prerequisite** for reliable signal mapping and analysis in multi-source PBF-LB/M data. This paper presented their pipeline position, design, library rationale (Eigen and KFR), and implementation, completing the data-preparation chain: Paper 1 (alignment) → Paper 2 (processing and correction) → Paper 3 (signal mapping) → Papers 4–5 (analysis and application).

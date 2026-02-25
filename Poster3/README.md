@@ -1,13 +1,11 @@
-# Poster 3: Industrial Application
+# Poster 1: Signal Mapping Framework
 
-**Title**: Industrial Application of Digital Quality Assessment Framework for Additively Manufactured Aircraft Components (LuFo VII)
+**Title**: Signal Mapping Framework for Multi-Source PBF-LB/M Data Integration in a Unified Voxel Domain
 
 **Target Conferences**: 
-- LuFo VII Events
-- Industry-focused conferences
-- RAPID + TCT
-- Aerospace quality conferences
-- Industrial AM conferences
+- ICAM (International Conference on Additive Manufacturing)
+- Additive Manufacturing conferences
+- AM-focused research showcases
 
 **Status**: In Development
 
@@ -15,10 +13,10 @@
 
 1. [Title and Authors](Title_Authors.md)
 2. [Introduction](Introduction.md)
-3. [Use Cases](Use_Cases.md)
-4. [Results and Impact](Results_and_Impact.md)
-5. [Business Value](Business_Value.md)
-6. [Lessons Learned](Lessons_Learned.md)
+3. [Key Innovation](Key_Innovation.md)
+4. [System Architecture](System_Architecture.md)
+5. [Results](Results.md)
+6. [Applications](Applications.md)
 7. [Visual Elements](Visual_Elements.md)
 8. [Conclusion](Conclusion.md)
 
@@ -31,8 +29,8 @@
 
 ## Key Focus Areas
 
-1. **LuFo VII Context**: Aeronautical research program, industry partnerships
-2. **Three Use Cases**: Process optimization, quality control, root cause analysis
-3. **Quantitative Results**: Time savings, quality improvements, cost savings
-4. **Business Value**: ROI, cost savings, practical impact
+1. **Signal Mapping Process**: How heterogeneous data is transformed to unified voxel domain
+2. **Multi-Source Integration**: Integration of hatching, laser, CT, and ISPM data
+3. **Voxel Grid Generation**: Uniform, adaptive, and multi-resolution grids
+4. **Results**: Data volume reduction, processing performance, spatial coverage
 

@@ -1,45 +1,38 @@
-# Paper 3: Industrial Application
+# Paper 3: Signal Mapping Framework
 
-**Title**: Industrial Application of a Comprehensive Data Analysis Framework for PBF-LB/M Additive Manufacturing: Process Optimization, Quality Control, and Root Cause Analysis
+**Title**: Unified Voxel Domain Signal Mapping for Multi-Source PBF-LB/M Process Data
 
-**Target Venue**: Computers in Industry (Elsevier)
+**Target Venue**: Additive Manufacturing (Elsevier)
 
-**Status**: ✅ Complete - Ready for Review and Refinement
+**Status**: ✅ Complete - Ready for Review
 
 ## Paper Structure
 
-This paper focuses on the **Industrial Application** as an application paper.
+This paper focuses on the **Signal Mapping Framework** as the primary contribution.
 
 ### Sections
 
-1. [Abstract](Abstract.md)
-2. [Industrial Context](Industrial_Context.md)
-3. [Framework Application](Framework_Application.md)
-4. [Results and Impact](Results_and_Impact.md)
-5. [Lessons Learned](Lessons_Learned.md)
-6. [Conclusion](Conclusion.md)
-7. [References](References.md)
-8. [Figures](Figures.md)
-9. [Tables](Tables.md)
+1. [Abstract](Abstract.md) (250 words)
+2. [Introduction](Introduction.md) (Problem statement, motivation)
+3. [Related Work](Related_Work.md) (Literature review)
+4. [Methodology](Methodology.md) (Signal mapping algorithms)
+5. [System Architecture](System_Architecture.md) (Data warehouse, clients)
+6. [Results](Results.md) (Case studies, performance)
+7. [Discussion](Discussion.md) (Advantages, limitations)
+8. [Conclusion](Conclusion.md)
+9. [References](References.md)
+10. [Figures](Figures.md) (6 flowcharts + case study results)
+11. [Tables](Tables.md) (Methods comparison, performance metrics)
 
-## Key Focus Areas
+## Key Contributions
 
-1. **Industrial Context**
-   - Industry background and challenges
-   - Requirements in industrial settings
+1. **Signal Mapping Framework**
+   - First comprehensive framework for multi-source PBF-LB/M data integration via voxel domain
+   - Handles coordinate system transformations, temporal/spatial synchronization, and noise reduction
+   - Enables variable resolution voxel grids for efficient data representation
 
-2. **Framework Application**
-   - Real-world application scenarios
-   - Implementation details
-   - Use cases
-
-3. **Results and Impact**
-   - Practical results
-   - Business value
-   - Impact assessment
-
-4. **Lessons Learned**
-   - Implementation challenges
-   - Best practices
-   - Recommendations
+2. **NoSQL Data Warehouse Architecture**
+   - Extension of existing NoSQL backend to full data warehouse
+   - Integration of ISPM and CT datasets with existing process data
+   - Multi-model storage optimized for different data types
 

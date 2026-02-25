@@ -2,58 +2,77 @@
 
 ## Required Tables
 
-### Table 1: Comparison of Signal Interpolation Methods
-- **Location**: Methodology section (Interpolation Method Comparison)
-- **Content**: Comparison of nearest neighbor, linear, IDW, Gaussian KDE, and RBF interpolation methods
-- **Columns**: Method, Status, Complexity, Smoothness, Sparse Data, Uncertainty, Parameters, Best For
+### Table 1: Old vs New Alignment (Grid-Based vs Point-First + Bbox-Corner)
 
-### Table 2: Comparison of Voxel Grid Types
-- **Location**: Methodology section (Grid Type Comparison)
-- **Content**: Comparison of uniform, adaptive, and multi-resolution grid types
-- **Columns**: Grid Type, Status, Memory Usage, Query Speed, Resolution Flexibility, Complexity, Best For
+- **Location**: Why Our Algorithm section (or Design)
+- **Content**: Comparison of deprecated grid-based approach and current point-first + bbox-corner approach
+- **Columns**: Aspect | Old (Grid-Based) | New (Point-First + Bbox-Corner)
+- **Rows**:
+  - Transform when: After voxelization | Before voxelization
+  - Correspondence: RANSAC / point matching | Bbox corners only (24×56 fits)
+  - Bbox for transform: From queried subset | Full data by default
+  - Validation: Same points as fit or raw order | best_ref_corners (reordered by best perm)
+  - Pass/fail: Could be inconsistent | Valid when max_error and rms_error ≤ tolerance
+  - Tolerance: Fixed or 0.5% | 1% of max extent (adaptive)
 
-### Table 3: Signal Mapping Performance
-- **Location**: Results section (Performance Metrics)
-- **Content**: Processing time and throughput for different configurations
-- **Columns**: Configuration, Points, Resolution (mm), Grid Type, Time (s), Points/sec
-- **Data**: Performance metrics for small, medium, large, adaptive, and multi-resolution configurations
+**Source**: Content matches `implementation_plan/new/SPATIAL_ALIGNMENT_DESIGN.md` (Comparison: Old vs New).
 
-### Table 4: Data Volume Reduction
-- **Location**: Results section (Data Volume Reduction)
-- **Content**: Data volume reduction achieved by signal mapping for each data source
-- **Columns**: Data Source, Original Points, Voxel Grid Size, Reduction Ratio, Storage (MB)
-- **Data**: Reduction metrics for hatching paths, laser parameters, CT defects, ISPM monitoring, and combined
+### Table 2: Transformation Computation Summary
 
-### Table 5: Data Sources and Characteristics
-- **Location**: Introduction or Methodology section
-- **Content**: Characteristics of each data source including coordinate systems, temporal resolution, spatial resolution, and data format
-- **Columns**: Data Source, Coordinate System, Temporal Resolution, Spatial Resolution, Data Format, Typical Point Count
-- **Suggested Content**:
-  - Hatching Paths: Build platform, Layer-based, Point-based, Structured, 100K-1M points
-  - Laser Parameters: Build platform, Real-time, Point-based, Structured, 10K-100K points
-  - CT Scans: CT scanner, Post-build, Voxel-based, Large arrays, 50K-500K defect locations
-  - ISPM Monitoring: Sensor coordinates, Real-time, Point-based, Time-series, 100-10K measurements
+- **Location**: Design section (Spatial Alignment)
+- **Content**: Summary of transformation computation steps
+- **Columns**: Step | Description
+- **Rows**:
+  - Input: source_corners (8×3), reference_corners (8×3)
+  - Permutations: 24 rotational permutations of reference corner order
+  - Triplets: 56 triplets per permutation (C(8,3))
+  - Fit: Similarity transform (Kabsch rotation + Umeyama scale + translation) from 3 source to 3 reordered reference corners
+  - Quality: Apply transform to all 8 source corners; compare to ref_reordered; max/mean/RMS error
+  - Selection: Choose (permutation, triplet) with smallest max error on 8 corners
+  - Output: 4×4 matrix, quality, best_ref_corners, optional per-fit errors
 
-### Table 6: Quality Metrics Summary
-- **Location**: Results section (Quality Assessment Results)
-- **Content**: Summary of quality metrics including completeness, alignment accuracy, and signal quality
-- **Columns**: Metric, Hatching, Laser, CT, ISPM, Overall
-- **Suggested Content**:
-  - Spatial Coverage: 85-95%, 70-85%, 40-60%, 15-30%, >90%
-  - Alignment Error: <0.5 voxel, <0.5 voxel, <1 voxel, <1 voxel, <1 voxel
-  - SNR: >20 dB, >20 dB, 10-25 dB, 15-20 dB, Variable
+### Table 3: Validation Parameters
 
-## Table Captions
+- **Location**: Design section (Validation) or Implementation and API
+- **Content**: Validation tolerance and pass/fail criteria
+- **Columns**: Parameter | Value / Criterion
+- **Rows**:
+  - Adaptive tolerance: max(0.01 * max_extent, 1e-3, validation_tolerance)
+  - Pass (max): max_error ≤ tolerance
+  - Pass (RMS): rms_error ≤ tolerance
+  - Reference: best_ref_corners (reordered by best permutation)
 
-**Table 1**: Comparison of signal interpolation methods supported and planned in the framework, including complexity, smoothness, and best use cases.
+### Table 4: query_and_transform_points Parameters (Summary)
 
-**Table 2**: Comparison of voxel grid types (uniform, adaptive, multi-resolution) with memory usage, query speed, and flexibility characteristics.
+- **Location**: Implementation and API section
+- **Content**: Main parameters of UnifiedQueryClient.query_and_transform_points
+- **Columns**: Parameter | Type | Description
+- **Rows**: model_id, source_types, reference_source, layer_range, bbox, use_full_extent_for_transform, validation_tolerance, save_processed_data, mongo_uri, db_name (see API doc for full descriptions).
 
-**Table 3**: Signal mapping performance metrics showing processing time and throughput for different data sizes and grid configurations.
+### Table 5: Returned Result Structure (Summary)
 
-**Table 4**: Data volume reduction achieved by signal mapping, showing reduction ratios and storage savings for each data source.
+- **Location**: Implementation and API section
+- **Content**: Keys returned in result dict
+- **Columns**: Key | Description
+- **Rows**: transformed_points, signals, unified_bounds, transformations, validation_results, raw_results; optional layer_alignment_result, layer_indices.
 
-**Table 5**: Characteristics of data sources integrated in the framework, including coordinate systems, temporal/spatial resolutions, and typical data volumes.
+### Table 6: Alignment Quality Metrics (Example)
 
-**Table 6**: Summary of quality assessment metrics including spatial coverage, alignment accuracy, and signal quality for each data source.
+- **Location**: Results section
+- **Content**: (To be filled with experimental data.) Per-source or aggregate: max_error, mean_error, rms_error, validation pass/fail, runtime (ms).
+- **Columns**: Source | Max Error (mm) | Mean Error (mm) | RMS (mm) | Pass | Time (ms)
+- **Data**: Placeholder until benchmarks are run.
 
+## Table Captions (Draft)
+
+**Table 1**: Comparison of grid-based (deprecated) and point-first + bbox-corner spatial alignment.
+
+**Table 2**: Steps in transformation computation from bbox corners (24×56 fits, Kabsch+Umeyama, quality on 8 corners).
+
+**Table 3**: Validation tolerance (adaptive 1% of max extent) and pass/fail criteria using best_ref_corners.
+
+**Table 4**: Main parameters of query_and_transform_points.
+
+**Table 5**: Main keys in the result dictionary of query_and_transform_points.
+
+**Table 6**: Example alignment quality metrics (to be replaced with actual experimental data).
