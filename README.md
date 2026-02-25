@@ -114,18 +114,18 @@ flowchart LR
 **Target Venue**: Additive Manufacturing (Elsevier)  
 **Status**: ✅ Complete - Ready for Review
 
-**What it’s about:** *Where* to put signals: mapping aligned, corrected data onto a unified voxel domain. Presents the core signal mapping framework, NoSQL data warehouse design, quality assessment, and data fusion.
+**What it’s about:** *Where* to put signals: mapping aligned, corrected data onto a unified voxel domain, plus **quality assessment** and **data fusion**. Presents the core signal mapping framework (5-step pipeline below), NoSQL data warehouse design, **Quality Assessment Module** (completeness, SNR, alignment accuracy), and **Data Fusion Module** (quality-weighted combination of multiple signals in the voxel domain).
 
 **Why read it:** Defines the five-step mapping pipeline and the five interpolation methods (nearest, linear, IDW, KDE, RBF) with formulas, grid types (uniform, adaptive, multi-resolution), and when to use each—so implementers and reviewers see the algorithms in one place.
 
-**Signal mapping process (5 steps):**
+**Signal mapping + fusion:** Paper 3 covers (i) **signal mapping** (5 steps: point data → voxel grid) and (ii) **data fusion** (combine multiple mapped signals per voxel with quality-based weighting). Flowchart below is the mapping pipeline; fusion operates on the stored grids.
 
 ```mermaid
 flowchart LR
-    A[1. Query] --> B[2. Coord transform] --> C[3. Voxel index] --> D[4. Interpolate] --> E[5. Store grid]
+    A[1. Query] --> B[2. Coord transform] --> C[3. Voxel index] --> D[4. Interpolate] --> E[5. Store grid] --> F[Fusion optional]
 ```
 
-*Step 4:* Nearest, Linear, IDW, KDE, or RBF; aggregation = mean/max/min/sum when multiple points per voxel.
+*Step 4:* Nearest, Linear, IDW, KDE, or RBF; aggregation = mean/max/min/sum when multiple points per voxel. *Fusion:* quality-weighted combination of multiple signals (see [`data-fusion.md`](Paper3/data-fusion.md)).
 
 **Interpolation algorithms** (step 4):
 
